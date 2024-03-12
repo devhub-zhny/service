@@ -1,8 +1,15 @@
 package zhny.devhub.device.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
+import zhny.devhub.device.entity.data.Gateway;
+import zhny.devhub.device.entity.data.GatewayData;
+import zhny.devhub.device.entity.data.Switch;
 import zhny.devhub.device.service.DeviceService;
 
 import javax.annotation.Resource;
@@ -61,8 +68,10 @@ public class DeviceController {
 
     //数据存储
     @GetMapping("/data")
-    public String save(@RequestBody String data){
-        return data;
+    public String save(@RequestBody String data) throws Exception{
+        Gson gson = new Gson();
+        GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
+        return  data;
     }
 
 
