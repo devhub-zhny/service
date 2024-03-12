@@ -1,0 +1,30 @@
+server:
+  port: 8022
+  tomcat:
+    uri-encoding: UTF-8
+    max-swallow-size: 100MB
+spring:
+  datasource:
+    url: jdbc:mysql://47.120.63.23:3306/zhny?characterEncoding=utf8&useSSL=true
+    username: root
+    password: 123456
+#  redis:
+#    url: jdbc:mysql://1.94.61.174:3306/carpooling?characterEncoding=utf8&useSSL=true
+#    username: root
+#    password: root
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath*:mapper/*.xml
+  global-config:
+    db-config:
+      logic-not-delete-value: 1
+      logic-delete-value: 0
+      id-type: assign_id
+#  type-aliases-package: com.alpha.database.space.entity.dto
+
+logging:
+  config:  classpath:log4j2.xml

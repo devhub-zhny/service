@@ -1,0 +1,8 @@
+17:23:37.658 [main] INFO  zhny.devhub.device.ZhnyApplication  - Starting ZhnyApplication using Java 17.0.9 on xuyideMacBook-Air.local with PID 61624 (/Users/essarai/workspace/Java/zhny/target/classes started by essarai in /Users/essarai/workspace/Java/zhny)
+17:23:37.665 [main] INFO  zhny.devhub.device.ZhnyApplication  - No active profile set, falling back to 1 default profile: "default"
+17:23:38.097 [main] INFO  org.apache.coyote.http11.Http11NioProtocol  - Initializing ProtocolHandler ["http-nio-8022"]
+17:23:38.097 [main] INFO  org.apache.catalina.core.StandardService  - Starting service [Tomcat]
+17:23:38.097 [main] INFO  org.apache.catalina.core.StandardEngine  - Starting Servlet engine: [Apache Tomcat/9.0.58]
+17:23:38.126 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]  - Initializing Spring embedded WebApplicationContext
+17:23:38.474 [main] INFO  org.apache.coyote.http11.Http11NioProtocol  - Starting ProtocolHandler ["http-nio-8022"]
+17:23:38.488 [main] INFO  zhny.devhub.device.ZhnyApplication  - Started ZhnyApplication in 0.979 seconds (JVM running for 1.813)
