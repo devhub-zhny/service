@@ -94,7 +94,7 @@ public class DeviceController {
     // 传感器详情包括数据
     // 获取传感器的值 依据设备ID查DeviceProperty获取属性名称，再结合二者查DeviceData
     @GetMapping("/data/{deviceId}")
-    public DeviceVo getData(@PathVariable Long deviceId){
+    public DeviceVo getData(@PathVariable Long deviceId,@RequestParam Boolean isValid){
         List<DeviceProperty> deviceProperties = devicePropertyService.searchByDeviceId(deviceId);
         List<String> propertyNames = deviceProperties.stream()
                 .map(DeviceProperty::getPropertyName)
@@ -102,7 +102,7 @@ public class DeviceController {
         Device device = deviceService.getById(deviceId);
         DeviceVo deviceVo = converter.toDeviceVo(device);
         if (!propertyNames.isEmpty()){
-            List<DeviceData> gatewayDataList = deviceDataService.searchByProperNameAndDeviceId(propertyNames,deviceId);
+            List<DeviceData> gatewayDataList = deviceDataService.searchByProperNameAndDeviceId(propertyNames,deviceId,isValid);
             deviceVo.setDeviceDataList(gatewayDataList);
         }
         return deviceVo;

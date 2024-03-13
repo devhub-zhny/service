@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import zhny.devhub.device.service.DeviceService;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -23,11 +24,11 @@ import java.util.List;
 public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceData> implements DeviceDataService {
 
     @Override
-    public List<DeviceData> searchByProperNameAndDeviceId(List<String> propertyNames, Long deviceID) {
+    public List<DeviceData> searchByProperNameAndDeviceId(List<String> propertyNames, Long deviceID, Boolean isValid) {
         LambdaQueryWrapper<DeviceData> queryWrapper = Wrappers.lambdaQuery(DeviceData.class);
         queryWrapper.eq(DeviceData::getDeviceId,deviceID)
                 .in(DeviceData::getPropertyName,propertyNames)
-                .eq(DeviceData::getIsValid,true);
+                .eq(isValid!=null,DeviceData::getIsValid,isValid.booleanValue());
 
         return this.baseMapper.selectList(queryWrapper);
     }
