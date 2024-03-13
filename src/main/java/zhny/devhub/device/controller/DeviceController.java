@@ -71,6 +71,7 @@ public class DeviceController {
     public String save(@RequestBody String data) throws Exception{
         Gson gson = new Gson();
         GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
+        // TODO 数据存入数据库中
         return  data;
     }
 
