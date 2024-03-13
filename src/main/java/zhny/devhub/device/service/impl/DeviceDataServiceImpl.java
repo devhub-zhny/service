@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 @Service
 public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceData> implements DeviceDataService {
-
+    
     @Override
     public List<DeviceData> searchByProperNameAndDeviceId(List<String> propertyNames, Long deviceID, Boolean isValid) {
         LambdaQueryWrapper<DeviceData> queryWrapper = Wrappers.lambdaQuery(DeviceData.class);

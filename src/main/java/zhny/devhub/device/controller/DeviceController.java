@@ -102,6 +102,7 @@ public class DeviceController {
         Device device = deviceService.getById(deviceId);
         DeviceVo deviceVo = converter.toDeviceVo(device);
         if (!propertyNames.isEmpty()){
+            // isValid为null则返回全部数据，为false则返回全部历史数据，为true则返回最新数据
             List<DeviceData> gatewayDataList = deviceDataService.searchByProperNameAndDeviceId(propertyNames,deviceId,isValid);
             deviceVo.setDeviceDataList(gatewayDataList);
         }
