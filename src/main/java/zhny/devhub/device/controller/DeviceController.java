@@ -7,13 +7,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
+import zhny.devhub.device.entity.DeviceData;
+import zhny.devhub.device.entity.DeviceProperty;
 import zhny.devhub.device.entity.data.Gateway;
 import zhny.devhub.device.entity.data.GatewayData;
 import zhny.devhub.device.entity.data.Switch;
+import zhny.devhub.device.entity.vo.DeviceVo;
+import zhny.devhub.device.service.DeviceDataService;
+import zhny.devhub.device.service.DevicePropertyService;
 import zhny.devhub.device.service.DeviceService;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -29,6 +36,15 @@ public class DeviceController {
 
     @Resource
     private DeviceService deviceService;
+
+    @Resource
+    private DevicePropertyService devicePropertyService;
+
+    @Resource
+    private DeviceDataService deviceDataService;
+
+    @Resource
+    private Converter converter;
 
     @GetMapping("/test")
     public String test(){
@@ -75,6 +91,22 @@ public class DeviceController {
         return  data;
     }
 
+    // 传感器详情包括数据
+    // 获取传感器的值 依据设备ID查DeviceProperty获取属性名称，再结合二者查DeviceData
+    @GetMapping("/data/{deviceId}")
+    public DeviceVo getData(@PathVariable Long deviceId){
+        List<DeviceProperty> deviceProperties = devicePropertyService.searchByDeviceId(deviceId);
+        List<String> propertyNames = deviceProperties.stream()
+                .map(DeviceProperty::getPropertyName)
+                .collect(Collectors.toList());
+        Device device = deviceService.getById(deviceId);
+        DeviceVo deviceVo = converter.toDeviceVo(device);
+        if (!propertyNames.isEmpty()){
+            List<DeviceData> gatewayDataList = deviceDataService.searchByProperNameAndDeviceId(propertyNames,deviceId);
+            deviceVo.setDeviceDataList(gatewayDataList);
+        }
+        return deviceVo;
+    }
 
 
 }
