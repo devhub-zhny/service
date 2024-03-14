@@ -3,7 +3,6 @@ package zhny.devhub.device.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
 import zhny.devhub.device.entity.DeviceData;
