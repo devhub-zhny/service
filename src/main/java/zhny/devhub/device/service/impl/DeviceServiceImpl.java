@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author essarai
@@ -29,22 +29,22 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     @Override
     public void open(Long id) {
         Device device = this.baseMapper.selectById(id);
-        if(device != null){
+        if (device != null) {
             device.setDeviceStatus(!device.getDeviceStatus());
             this.baseMapper.updateById(device);
             //开关物理设备
             Boolean bind = device.isBinding();
-            if(!bind){
-                log.info(id+"设备还没绑定");
-            }else{
+            if (!bind) {
+                log.info(id + "设备还没绑定");
+            } else {
                 //TODO 此处操作具体物理设备
 
             }
 
 
-            log.info(id+"开关操作成功");
-        }else{
-            log.info(id+"设备不存在");
+            log.info(id + "开关操作成功");
+        } else {
+            log.info(id + "设备不存在");
         }
 
     }
@@ -52,28 +52,28 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     @Override
     public Page<Device> all(int current, int pageSize) {
         return this.baseMapper.selectPage(
-                new Page<>(current,pageSize),
+                new Page<>(current, pageSize),
                 new QueryWrapper<>());
     }
 
     @Override
-    public void bind( Long id) {
+    public void bind(Long id) {
         Device device = this.baseMapper.selectById(id);
-        if(device != null){
+        if (device != null) {
             device.setBinding(true);
             this.baseMapper.updateById(device);
-            log.info(device.getDeviceName()+"设备绑定成功");
-        }else{
-            log.info(id+"设备不存在");
+            log.info(device.getDeviceName() + "设备绑定成功");
+        } else {
+            log.info(id + "设备不存在");
         }
 
     }
 
     @Override
-    public Page<Device> searchByStatus(int status,int current, int pageSize) {
-        Page<Device> page = new Page<>(current,pageSize);
+    public Page<Device> searchByStatus(int status, int current, int pageSize) {
+        Page<Device> page = new Page<>(current, pageSize);
         LambdaQueryWrapper<Device> queryWrapper = Wrappers.lambdaQuery(Device.class)
-                .eq(status!=0,Device::getDeviceStatus,status);
-        return this.baseMapper.selectPage(page,queryWrapper);
+                .eq(status != 0, Device::getDeviceStatus, status);
+        return this.baseMapper.selectPage(page, queryWrapper);
     }
 }

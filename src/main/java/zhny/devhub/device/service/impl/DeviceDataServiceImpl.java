@@ -19,7 +19,7 @@ import java.util.Objects;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author essarai
@@ -32,12 +32,13 @@ public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceD
 
     @Resource
     DevicePropertyMapper devicePropertyMapper;
+
     @Override
     public List<DeviceData> searchByProperNameAndDeviceId(List<String> propertyNames, Long deviceID, Boolean isValid) {
         LambdaQueryWrapper<DeviceData> queryWrapper = Wrappers.lambdaQuery(DeviceData.class);
-        queryWrapper.eq(DeviceData::getDeviceId,deviceID)
-                .in(DeviceData::getPropertyName,propertyNames)
-                .eq(isValid!=null,DeviceData::getIsValid,isValid);
+        queryWrapper.eq(DeviceData::getDeviceId, deviceID)
+                .in(DeviceData::getPropertyName, propertyNames)
+                .eq(isValid != null, DeviceData::getIsValid, isValid);
 
         return this.baseMapper.selectList(queryWrapper);
     }
@@ -45,12 +46,12 @@ public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceD
     @Override
     public void insert(DeviceData deviceData) {
         LambdaQueryWrapper<DeviceProperty> deviceDataLambdaQueryWrapper = Wrappers.lambdaQuery(DeviceProperty.class)
-                .eq(DeviceProperty::getDeviceId,deviceData.getDeviceId())
-                .eq(DeviceProperty::getPropertyName,deviceData.getPropertyName());
-        if(devicePropertyMapper.selectCount(deviceDataLambdaQueryWrapper) > 0){
+                .eq(DeviceProperty::getDeviceId, deviceData.getDeviceId())
+                .eq(DeviceProperty::getPropertyName, deviceData.getPropertyName());
+        if (devicePropertyMapper.selectCount(deviceDataLambdaQueryWrapper) > 0) {
             this.baseMapper.insert(deviceData);
-        }else{
-            log.info("device:-"+deviceData.getDeviceId()+"-"+deviceData.getPropertyName()+"not exist");
+        } else {
+            log.info("device:-" + deviceData.getDeviceId() + "-" + deviceData.getPropertyName() + "not exist");
         }
 
     }

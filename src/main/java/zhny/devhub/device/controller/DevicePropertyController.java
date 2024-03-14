@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author essarai
@@ -33,14 +33,13 @@ public class DevicePropertyController {
     private Converter converter;
 
     @PostMapping("/property")
-    private void insert(@RequestBody DeviceProperty deviceProperty){
+    private void insert(@RequestBody DeviceProperty deviceProperty) {
         Device device = deviceService.getById(deviceProperty.getDeviceId());
-        if(device == null){
-            log.info("device:"+deviceProperty.getDeviceId()+"not exist");
+        if (device == null) {
+            log.info("device:" + deviceProperty.getDeviceId() + "not exist");
         }
         devicePropertyService.save(deviceProperty);
     }
-
 
 
 }

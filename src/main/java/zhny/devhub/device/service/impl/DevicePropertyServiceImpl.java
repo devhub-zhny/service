@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author essarai
@@ -25,7 +25,7 @@ public class DevicePropertyServiceImpl extends ServiceImpl<DevicePropertyMapper,
     @Override
     public List<DeviceProperty> searchByDeviceId(Long deviceId) {
         LambdaQueryWrapper<DeviceProperty> queryWrapper = Wrappers.lambdaQuery(DeviceProperty.class);
-        queryWrapper.eq(deviceId!=null,DeviceProperty::getDeviceId,deviceId);
+        queryWrapper.eq(deviceId != null, DeviceProperty::getDeviceId, deviceId);
         return this.baseMapper.selectList(queryWrapper);
     }
 
