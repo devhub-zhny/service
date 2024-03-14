@@ -35,11 +35,11 @@ public class DeviceData implements Serializable {
 
     private String propertyName;
 
-    private BigDecimal propertyValue;
+    private Float propertyValue;
 
     private String propertyUnit;
 
-    private BigDecimal alarmThreshold;
+    private Float alarmThreshold;
 
     private Boolean isValid;
 }

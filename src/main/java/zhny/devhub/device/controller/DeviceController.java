@@ -3,6 +3,7 @@ package zhny.devhub.device.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
 import zhny.devhub.device.entity.DeviceData;
@@ -49,7 +50,7 @@ public class DeviceController {
     // 创建设备
     @PostMapping("/insert")
     public void insert(@RequestBody Device device){
-        deviceService.insert(device);
+        deviceService.save(device);
     }
 
     // 开关设备
@@ -61,7 +62,7 @@ public class DeviceController {
     // 删除设备
     @DeleteMapping("/{id}")
     private void delete(@PathVariable Long id){
-        deviceService.delete(id);
+        deviceService.removeById(id);
     }
 
     // 绑定设备
@@ -88,7 +89,7 @@ public class DeviceController {
     // 传感器详情包括数据
     // 获取传感器的值 依据设备ID查DeviceProperty获取属性名称，再结合二者查DeviceData
     @GetMapping("/data/{deviceId}")
-    public DeviceVo getData(@PathVariable Long deviceId,@RequestParam Boolean isValid){
+    public DeviceVo getData(@PathVariable Long deviceId,@RequestParam(required = false) Boolean isValid){
         List<DeviceProperty> deviceProperties = devicePropertyService.searchByDeviceId(deviceId);
         List<String> propertyNames = deviceProperties.stream()
                 .map(DeviceProperty::getPropertyName)

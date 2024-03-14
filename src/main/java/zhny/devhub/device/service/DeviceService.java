@@ -15,11 +15,7 @@ import java.util.List;
  * @since 2024-03-11 01:29:23
  */
 public interface DeviceService extends IService<Device> {
-    int insert(Device device);
-
     void open(Long id);
-
-    int delete(Long id);
 
     Page<Device> all(int current, int pageSize);
 

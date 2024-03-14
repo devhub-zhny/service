@@ -28,8 +28,13 @@ public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceD
         LambdaQueryWrapper<DeviceData> queryWrapper = Wrappers.lambdaQuery(DeviceData.class);
         queryWrapper.eq(DeviceData::getDeviceId,deviceID)
                 .in(DeviceData::getPropertyName,propertyNames)
-                .eq(isValid!=null,DeviceData::getIsValid,isValid.booleanValue());
+                .eq(isValid!=null,DeviceData::getIsValid,isValid);
 
         return this.baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public void insert(DeviceData deviceData) {
+        this.baseMapper.insert(deviceData);
     }
 }

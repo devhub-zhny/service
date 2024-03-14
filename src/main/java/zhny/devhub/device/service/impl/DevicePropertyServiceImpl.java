@@ -29,4 +29,5 @@ public class DevicePropertyServiceImpl extends ServiceImpl<DevicePropertyMapper,
         return this.baseMapper.selectList(queryWrapper);
     }
 
+
 }

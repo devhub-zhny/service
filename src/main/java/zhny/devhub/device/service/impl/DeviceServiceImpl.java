@@ -27,11 +27,6 @@ import java.util.List;
 public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> implements DeviceService {
 
     @Override
-    public int insert(Device device) {
-        return this.baseMapper.insert(device);
-    }
-
-    @Override
     public void open(Long id) {
         Device device = this.baseMapper.selectById(id);
         if(device != null){
@@ -52,11 +47,6 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
             log.info(id+"设备不存在");
         }
 
-    }
-
-    @Override
-    public int delete(Long id) {
-        return this.baseMapper.deleteById(id);
     }
 
     @Override

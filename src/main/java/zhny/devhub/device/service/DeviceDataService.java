@@ -17,4 +17,6 @@ public interface DeviceDataService extends IService<DeviceData> {
 
     List<DeviceData> searchByProperNameAndDeviceId(List<String> propertyNames, Long deviceID, Boolean isValid);
 
+    void insert(DeviceData deviceData);
+
 }
