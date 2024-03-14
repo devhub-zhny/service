@@ -1,14 +1,19 @@
 package zhny.devhub.device.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import lombok.extern.slf4j.Slf4j;
 import zhny.devhub.device.entity.DeviceData;
+import zhny.devhub.device.entity.DeviceProperty;
 import zhny.devhub.device.mapper.DeviceDataMapper;
+import zhny.devhub.device.mapper.DevicePropertyMapper;
 import zhny.devhub.device.service.DeviceDataService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import zhny.devhub.device.service.DeviceService;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,8 +26,12 @@ import java.util.Objects;
  * @since 2024-03-11 08:43:19
  */
 @Service
+@Slf4j
 public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceData> implements DeviceDataService {
-    
+
+
+    @Resource
+    DevicePropertyMapper devicePropertyMapper;
     @Override
     public List<DeviceData> searchByProperNameAndDeviceId(List<String> propertyNames, Long deviceID, Boolean isValid) {
         LambdaQueryWrapper<DeviceData> queryWrapper = Wrappers.lambdaQuery(DeviceData.class);
@@ -35,6 +44,14 @@ public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceD
 
     @Override
     public void insert(DeviceData deviceData) {
-        this.baseMapper.insert(deviceData);
+        LambdaQueryWrapper<DeviceProperty> deviceDataLambdaQueryWrapper = Wrappers.lambdaQuery(DeviceProperty.class)
+                .eq(DeviceProperty::getDeviceId,deviceData.getDeviceId())
+                .eq(DeviceProperty::getPropertyName,deviceData.getPropertyName());
+        if(devicePropertyMapper.selectCount(deviceDataLambdaQueryWrapper) > 0){
+            this.baseMapper.insert(deviceData);
+        }else{
+            log.info("device:-"+deviceData.getDeviceId()+"-"+deviceData.getPropertyName()+"not exist");
+        }
+
     }
 }

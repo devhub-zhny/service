@@ -106,7 +106,7 @@ public class DeviceController {
 
     //依据设备状态查询获取设备列表
     @GetMapping("/search")
-    private Page<Device> searchByStatus(int status, @RequestParam int current, @RequestParam int pageSize){
+    private Page<Device> searchByStatus(@RequestParam int status, @RequestParam int current, @RequestParam int pageSize){
         return deviceService.searchByStatus(status,current,pageSize);
     }
 

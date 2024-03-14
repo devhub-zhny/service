@@ -51,9 +51,9 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
 
     @Override
     public Page<Device> all(int current, int pageSize) {
-        Page<Device> page = new Page<>(current,pageSize);
-        Page<Device> res = this.baseMapper.selectPage(page,new QueryWrapper<>());
-        return res;
+        return this.baseMapper.selectPage(
+                new Page<>(current,pageSize),
+                new QueryWrapper<>());
     }
 
     @Override
@@ -72,10 +72,8 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     @Override
     public Page<Device> searchByStatus(int status,int current, int pageSize) {
         Page<Device> page = new Page<>(current,pageSize);
-        LambdaQueryWrapper<Device> queryWrapper = Wrappers.lambdaQuery(Device.class);
-        if (status!=0){
-            queryWrapper.eq(Device::getDeviceStatus,status);
-        }
+        LambdaQueryWrapper<Device> queryWrapper = Wrappers.lambdaQuery(Device.class)
+                .eq(status!=0,Device::getDeviceStatus,status);
         return this.baseMapper.selectPage(page,queryWrapper);
     }
 }

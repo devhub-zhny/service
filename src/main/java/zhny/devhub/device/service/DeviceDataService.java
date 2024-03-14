@@ -19,4 +19,5 @@ public interface DeviceDataService extends IService<DeviceData> {
 
     void insert(DeviceData deviceData);
 
+
 }
