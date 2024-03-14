@@ -38,8 +38,8 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
             device.setDeviceStatus(!device.getDeviceStatus());
             this.baseMapper.updateById(device);
             //开关物理设备
-            String physicsId = device.getDevicePhysicalId();
-            if(physicsId.equals("")){
+            Boolean bind = device.isBinding();
+            if(!bind){
                 log.info(id+"设备还没绑定");
             }else{
                 //TODO 此处操作具体物理设备
