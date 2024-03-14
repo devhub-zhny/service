@@ -43,4 +43,7 @@ public class Device implements Serializable {
     private String deviceName;
 
     private String deviceCategoryName;
+
+    //是否绑定
+    private boolean isBinding;
 }

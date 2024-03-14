@@ -1,9 +1,12 @@
 package zhny.devhub.device.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import zhny.devhub.device.entity.Device;
+import zhny.devhub.device.entity.DeviceProperty;
 import zhny.devhub.device.mapper.DeviceMapper;
 import zhny.devhub.device.service.DeviceService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -64,15 +67,25 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     }
 
     @Override
-    public void bind(String physicsId, Long id) {
+    public void bind( Long id) {
         Device device = this.baseMapper.selectById(id);
         if(device != null){
-            device.setDevicePhysicalId(physicsId);
+            device.setBinding(true);
             this.baseMapper.updateById(device);
             log.info(device.getDeviceName()+"设备绑定成功");
         }else{
             log.info(id+"设备不存在");
         }
 
+    }
+
+    @Override
+    public Page<Device> searchByStatus(int status,int current, int pageSize) {
+        Page<Device> page = new Page<>(current,pageSize);
+        LambdaQueryWrapper<Device> queryWrapper = Wrappers.lambdaQuery(Device.class);
+        if (status!=0){
+            queryWrapper.eq(Device::getDeviceStatus,status);
+        }
+        return this.baseMapper.selectPage(page,queryWrapper);
     }
 }

@@ -47,8 +47,8 @@ public class DeviceController {
     private Converter converter;
 
     @GetMapping("/test")
-    public String test(){
-        return "测试成功";
+    public String test(@RequestBody String data){
+        return data;
     }
 
     // 创建设备
@@ -71,15 +71,14 @@ public class DeviceController {
 
     // 绑定设备
     @PatchMapping("/bind/{id}")
-    private void bind(String physicsId ,@PathVariable Long id){
-        deviceService.bind(physicsId,id);
+    private void bind(@PathVariable Long id){
+        deviceService.bind(id);
     }
 
     // 获取所有设备
     @GetMapping("/all")
     private Page<Device> all(@RequestParam int current, @RequestParam int pageSize){
         return deviceService.all(current,pageSize);
-
     }
 
     //数据存储
@@ -107,6 +106,12 @@ public class DeviceController {
             deviceVo.setDeviceDataList(gatewayDataList);
         }
         return deviceVo;
+    }
+
+    //依据设备状态查询获取设备列表
+    @GetMapping("/search")
+    private Page<Device> searchByStatus(int status, @RequestParam int current, @RequestParam int pageSize){
+        return deviceService.searchByStatus(status,current,pageSize);
     }
 
 
