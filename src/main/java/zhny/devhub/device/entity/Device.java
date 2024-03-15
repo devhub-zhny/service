@@ -43,7 +43,7 @@ public class Device implements Serializable {
     // 设备异常状态
     private String deviceState;
 
-    private String deviceName = "设备";
+    private String deviceName = "未设置名称";
 
     // 设备分类
     private String deviceCategoryName;

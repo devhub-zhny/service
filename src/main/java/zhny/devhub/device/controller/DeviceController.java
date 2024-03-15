@@ -88,28 +88,31 @@ public class DeviceController {
         // 获取所有网关列表
         List<Gateway> allGateways = gatewayData.getGateways();
 
-        // 获取所有节点列表
+        // 获取所有节点列表，并设置上级设备
         List<Node> allNodes = allGateways.stream()
                 .flatMap(gateway -> gateway.getNodes().stream()
                         .map(node -> {
-                            node.setParentDeviceId(gateway.getGatewayId()); // 设置上级设备ID
+                            // 设置上级设备ID
+                            node.setParentDeviceId(gateway.getGatewayId());
                             return node;
                         }))
                 .collect(Collectors.toList());
 
-        // 获取所有节点的传感器列表
+        // 获取所有节点的传感器列表，并设置上级设备
         List<Sensor> allSensors = allNodes.stream()
                 .flatMap(node -> node.getSensors().stream()
                         .map(sensor -> {
+                            // 设置上级设备ID
                             sensor.setParentDeviceId(node.getNodeId());
                             return sensor;
                         }))
                 .collect(Collectors.toList());
 
-        // 获取所有节点的开关列表
+        // 获取所有节点的开关列表，并设置上级设备
         List<Switch> allSwitches = allNodes.stream()
                 .flatMap(node -> node.getSwitches().stream()
                         .map(aSwitch -> {
+                            // 设置上级设备ID
                             aSwitch.setParentDeviceId(node.getNodeId());
                             return aSwitch;
                         }))
@@ -129,17 +132,15 @@ public class DeviceController {
         // list switch -> list device
         List<Device> switchesAboutDevice = converter.switchListToDeviceList(allSwitches);
 
-//        // gateway & nodes 这个不涉及数据直接插
-//        deviceService.saveBatch(gateways);
-//        deviceService.saveBatch(nodes);
-//
-//        // sensor & switch 这个插完还得插数据
-//        // TODO 没想好
-//        deviceService.saveBatch(sensorsAboutDevice);
-//        deviceService.saveBatch(switchesAboutDevice);
+        // gateway & nodes 这个不涉及数据直接插
+        deviceService.saveBatch(gateways);
+        deviceService.saveBatch(nodes);
 
-
-
+        // TODO 没想好
+        // sensor & switch
+        // 这个插完还得插数据这块的思路是，依据设备物理ID查询得到设备ID，之后再插入两张表
+        deviceService.saveBatch(sensorsAboutDevice);
+        deviceService.saveBatch(switchesAboutDevice);
 
 
         return data;
