@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Switch {
     private Long switchId;
-    private String sensorStatus;
-    private boolean isOpen;
+    private String deviceStatus;
+    private Boolean isOpen;
     private String timestamp;
     private Long ParentDeviceId;
 

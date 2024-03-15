@@ -16,7 +16,7 @@ public class Node {
     // 上级设备物理ID
     private Long parentDeviceId;
     // 设备开启状态
-    private boolean isOpen;
+    private Boolean isOpen;
     private String timestamp;
     private List<Switch> switches;
     private List<Sensor> sensors;

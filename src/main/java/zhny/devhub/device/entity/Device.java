@@ -41,9 +41,9 @@ public class Device implements Serializable {
     private String deviceAddress;
 
     // 设备异常状态
-    private Integer deviceState;
+    private String deviceState;
 
-    private String deviceName;
+    private String deviceName = "设备";
 
     // 设备分类
     private String deviceCategoryName;

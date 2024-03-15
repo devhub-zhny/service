@@ -3,6 +3,7 @@ package zhny.devhub.device.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
 import zhny.devhub.device.entity.DeviceData;
@@ -78,6 +79,7 @@ public class DeviceController {
 
     //数据存储
     @GetMapping("/data")
+    @Transactional
     public String save(@RequestBody String data) throws Exception {
         Gson gson = new Gson();
         GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
@@ -119,11 +121,26 @@ public class DeviceController {
         // list node -> list device
         List<Device> nodes = converter.nodeListToDeviceList(allNodes);
 
-        // list switch -> list device
-        List<Device> switches = converter.switchListToDeviceList(allSwitches);
-
         // list sensor -> list device
-        List<Device> sensors = converter.sensorListToDeviceList(allSensors);
+        List<Device> sensorsAboutDevice = converter.sensorListToDeviceList(allSensors);
+//        List<DeviceData> sensorsAboutData = converter.sensorListToDataList(allSensors);
+//        List<DeviceProperty> sensorsAboutProperty = converter.sensorListToPropertyList(allSensors);
+
+        // list switch -> list device
+        List<Device> switchesAboutDevice = converter.switchListToDeviceList(allSwitches);
+
+//        // gateway & nodes 这个不涉及数据直接插
+//        deviceService.saveBatch(gateways);
+//        deviceService.saveBatch(nodes);
+//
+//        // sensor & switch 这个插完还得插数据
+//        // TODO 没想好
+//        deviceService.saveBatch(sensorsAboutDevice);
+//        deviceService.saveBatch(switchesAboutDevice);
+
+
+
+
 
         return data;
     }

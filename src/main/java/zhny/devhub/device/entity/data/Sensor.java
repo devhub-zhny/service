@@ -11,8 +11,8 @@ public class Sensor {
     // 物理设备ID
     private Long sensorId;
     // 设备异常状态
-    private String sensorStatus;
-    private boolean isOpen;
+    private String deviceStatus;
+    private Boolean isOpen;
     private String sensorType;
     private double value;
     private String unit;

@@ -13,9 +13,9 @@ public class Gateway {
     // 物理设备ID
     private Long gatewayId;
     // 设备异常状态
-    private String gatewayStatus;
+    private String deviceStatus;
     // 设备开启状态
-    private boolean isOpen;
+    private Boolean isOpen;
     // 上传时间
     private String timestamp;
     // 节点
