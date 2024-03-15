@@ -1,4 +1,4 @@
-package zhny.devhub.device.con;
+package zhny.devhub.device.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

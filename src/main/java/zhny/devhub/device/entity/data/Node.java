@@ -10,8 +10,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Node {
-    private String nodeId;
+    private Long nodeId;
+    // 设备异常状态
     private String deviceStatus;
+    // 上级设备物理ID
+    private Long parentDeviceId;
+    // 设备开启状态
     private boolean isOpen;
     private String timestamp;
     private List<Switch> switches;

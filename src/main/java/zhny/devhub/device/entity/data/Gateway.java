@@ -10,9 +10,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Gateway {
-    private String gatewayId;
+    // 物理设备ID
+    private Long gatewayId;
+    // 设备异常状态
     private String gatewayStatus;
+    // 设备开启状态
     private boolean isOpen;
+    // 上传时间
     private String timestamp;
+    // 节点
     private List<Node> nodes;
 }

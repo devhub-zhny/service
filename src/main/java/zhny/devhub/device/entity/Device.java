@@ -26,8 +26,10 @@ public class Device implements Serializable {
     @TableId(value = "device_id", type = IdType.ASSIGN_ID)
     private Long deviceId;
 
-    private String devicePhysicalId;
+    // 设备物理ID
+    private Long devicePhysicalId;
 
+    // 上级设备物理ID
     private Long parentDeviceId;
 
     private LocalDateTime offlineTime;
@@ -35,6 +37,7 @@ public class Device implements Serializable {
     // 设备是否开启
     private Boolean deviceStatus = false;
 
+    // 设备地址
     private String deviceAddress;
 
     // 设备异常状态
@@ -42,6 +45,7 @@ public class Device implements Serializable {
 
     private String deviceName;
 
+    // 设备分类
     private String deviceCategoryName;
 
     //是否绑定

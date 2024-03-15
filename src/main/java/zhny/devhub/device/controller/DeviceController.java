@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
 import zhny.devhub.device.entity.DeviceData;
 import zhny.devhub.device.entity.DeviceProperty;
-import zhny.devhub.device.entity.data.GatewayData;
+import zhny.devhub.device.entity.data.*;
 import zhny.devhub.device.entity.vo.DeviceVo;
 import zhny.devhub.device.service.DeviceDataService;
 import zhny.devhub.device.service.DevicePropertyService;
@@ -82,6 +82,49 @@ public class DeviceController {
         Gson gson = new Gson();
         GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
         // TODO 数据存入数据库中
+
+        // 获取所有网关列表
+        List<Gateway> allGateways = gatewayData.getGateways();
+
+        // 获取所有节点列表
+        List<Node> allNodes = allGateways.stream()
+                .flatMap(gateway -> gateway.getNodes().stream()
+                        .map(node -> {
+                            node.setParentDeviceId(gateway.getGatewayId()); // 设置上级设备ID
+                            return node;
+                        }))
+                .collect(Collectors.toList());
+
+        // 获取所有节点的传感器列表
+        List<Sensor> allSensors = allNodes.stream()
+                .flatMap(node -> node.getSensors().stream()
+                        .map(sensor -> {
+                            sensor.setParentDeviceId(node.getNodeId());
+                            return sensor;
+                        }))
+                .collect(Collectors.toList());
+
+        // 获取所有节点的开关列表
+        List<Switch> allSwitches = allNodes.stream()
+                .flatMap(node -> node.getSwitches().stream()
+                        .map(aSwitch -> {
+                            aSwitch.setParentDeviceId(node.getNodeId());
+                            return aSwitch;
+                        }))
+                .collect(Collectors.toList());
+
+        // list gateway -> list device
+        List<Device> gateways = converter.gatewayListToDeviceList(allGateways);
+
+        // list node -> list device
+        List<Device> nodes = converter.nodeListToDeviceList(allNodes);
+
+        // list switch -> list device
+        List<Device> switches = converter.switchListToDeviceList(allSwitches);
+
+        // list sensor -> list device
+        List<Device> sensors = converter.sensorListToDeviceList(allSensors);
+
         return data;
     }
 
