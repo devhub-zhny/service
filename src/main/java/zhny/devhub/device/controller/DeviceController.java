@@ -135,12 +135,12 @@ public class DeviceController {
         // gateway & nodes 这个不涉及数据直接插
         deviceService.saveBatch(gateways);
         deviceService.saveBatch(nodes);
-
+        deviceService.saveBatch(switchesAboutDevice);
         // TODO 没想好
         // sensor & switch
         // 这个插完还得插数据这块的思路是，依据设备物理ID查询得到设备ID，之后再插入两张表
         deviceService.saveBatch(sensorsAboutDevice);
-        deviceService.saveBatch(switchesAboutDevice);
+
 
 
         return data;

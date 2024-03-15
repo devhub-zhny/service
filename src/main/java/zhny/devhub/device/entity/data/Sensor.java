@@ -13,6 +13,7 @@ public class Sensor {
     // 设备异常状态
     private String deviceStatus;
     private Boolean isOpen;
+    // 属性名称
     private String sensorType;
     private double value;
     private String unit;
