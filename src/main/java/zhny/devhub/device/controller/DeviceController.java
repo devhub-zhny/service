@@ -3,6 +3,7 @@ package zhny.devhub.device.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * @author essarai
  * @since 2024-03-11 01:29:23
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/device")
 public class DeviceController {
@@ -83,7 +85,6 @@ public class DeviceController {
     public String save(@RequestBody String data) throws Exception {
         Gson gson = new Gson();
         GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
-        // TODO 数据存入数据库中
 
         // 获取所有网关列表
         List<Gateway> allGateways = gatewayData.getGateways();
@@ -136,10 +137,36 @@ public class DeviceController {
         deviceService.saveBatch(gateways);
         deviceService.saveBatch(nodes);
         deviceService.saveBatch(switchesAboutDevice);
-        // TODO 没想好
+        // TODO  待优化
         // sensor & switch
         // 这个插完还得插数据这块的思路是，依据设备物理ID查询得到设备ID，之后再插入两张表
-        deviceService.saveBatch(sensorsAboutDevice);
+        for (Sensor sensor : allSensors) {
+            Device device = converter.sensorToDevice(sensor);
+            try {
+                deviceService.save(device);
+            } catch (Exception e) {
+                log.error("DeviceController.save中，插入 Device 失败");
+            }
+
+            DeviceProperty deviceProperty = DeviceProperty.builder()
+                    .deviceId(device.getDeviceId())
+                    .propertyName(sensor.getSensorType())
+                    .build();
+            try {
+                devicePropertyService.save(deviceProperty);
+            } catch (Exception e) {
+                log.error("DeviceController.save中，插入 DeviceProperty 失败");
+            }
+
+            DeviceData deviceData = converter.sensorToDeviceData(sensor);
+            deviceData.setDeviceId(device.getDeviceId());
+            deviceData.setPropertyName(sensor.getSensorType());
+            try {
+                deviceDataService.save(deviceData);
+            } catch (Exception e) {
+                log.error("DeviceController.save中，插入 DeviceData 失败");
+            }
+        }
 
 
 

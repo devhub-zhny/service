@@ -54,6 +54,12 @@ public interface Converter {
         return LocalDateTime.parse(strDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
     }
 
+    @Mapping(target = "dataTime", source = "timestamp")
+    @Mapping(target = "propertyValue", source = "value")
+    @Mapping(target = "propertyUnit", source = "unit")
+    @Mapping(target = "isValid", source = "isOpen")
+    DeviceData sensorToDeviceData(Sensor sensor);
+
 //    @Mapping(target = "deviceStatus",source = "isOpen")
 //    DeviceData map(Sensor sensor);
 //    List<DeviceData> sensorListToDataList(List<Sensor> allSensors);
