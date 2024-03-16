@@ -2,16 +2,12 @@ package zhny.devhub.device.entity.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class SwitchVo {
 
-    private Long gatewayId;
-
-    private Long nodeId;
-
-    private Long sensorId;
-
-    private Long switchId;
+    private List<Long> Ids;
 
     private String deviceType;
 
