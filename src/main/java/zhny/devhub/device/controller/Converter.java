@@ -24,6 +24,7 @@ public interface Converter {
     @Mapping(target = "deviceState",source = "deviceStatus")
     @Mapping(target = "deviceStatus",source = "isOpen")
     @Mapping(target = "offlineTime",source = "timestamp")
+    @Mapping(target = "deviceCategoryName",expression = "java(\"gateway\")")
     Device gatewayToDevice(Gateway gateway);
     List<Device> gatewayListToDeviceList(List<Gateway> allGateways);
 
@@ -32,6 +33,7 @@ public interface Converter {
     @Mapping(target = "deviceState",source = "deviceStatus")
     @Mapping(target = "deviceStatus",source = "isOpen")
     @Mapping(target = "offlineTime",source = "timestamp")
+    @Mapping(target = "deviceCategoryName",expression = "java(\"node\")")
     Device nodeToDevice(Node node);
     List<Device> nodeListToDeviceList(List<Node> allNodes);
 
@@ -40,6 +42,7 @@ public interface Converter {
     @Mapping(target = "deviceState",source = "deviceStatus")
     @Mapping(target = "deviceStatus",source = "isOpen")
     @Mapping(target = "offlineTime",source = "timestamp")
+    @Mapping(target = "deviceCategoryName",expression = "java(\"switch\")")
     Device switchToDevice(Switch s);
     List<Device> switchListToDeviceList(List<Switch> allSwitches);
 
@@ -47,6 +50,7 @@ public interface Converter {
     @Mapping(target = "deviceState",source = "deviceStatus")
     @Mapping(target = "deviceStatus",source = "isOpen")
     @Mapping(target = "offlineTime",source = "timestamp")
+    @Mapping(target = "deviceCategoryName",expression = "java(\"sensor\")")
     Device sensorToDevice(Sensor sensor);
     List<Device> sensorListToDeviceList(List<Sensor> allSensors);
 
@@ -60,11 +64,4 @@ public interface Converter {
     @Mapping(target = "isValid", source = "isOpen")
     DeviceData sensorToDeviceData(Sensor sensor);
 
-//    @Mapping(target = "deviceStatus",source = "isOpen")
-//    DeviceData map(Sensor sensor);
-//    List<DeviceData> sensorListToDataList(List<Sensor> allSensors);
-//
-//    @Mapping(target = "deviceStatus",source = "isOpen")
-//    DeviceProperty maps(Sensor sensor);
-//    List<DeviceProperty> sensorListToPropertyList(List<Sensor> allSensors);
 }
