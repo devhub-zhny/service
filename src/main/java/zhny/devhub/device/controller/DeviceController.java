@@ -4,6 +4,7 @@ package zhny.devhub.device.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
 import zhny.devhub.device.entity.DeviceData;
@@ -58,30 +59,32 @@ public class DeviceController {
 
     // 开关设备
     @PatchMapping("/switch/{id}")
-    private SwitchVo open(@PathVariable Long id) {
+    public SwitchVo open(@PathVariable Long id) {
         return deviceService.open(id);
     }
 
     // 删除设备
     @DeleteMapping("/{id}")
-    private void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         deviceService.removeById(id);
     }
 
     // 绑定设备
     @PatchMapping("/bind/{id}")
-    private void bind(@PathVariable Long id) {
+    public void bind(@PathVariable Long id) {
         deviceService.bind(id);
     }
 
     // 获取所有设备，并按先ID，后时间排序，ID小，时间近的在前
     @GetMapping("/all")
-    private Page<Device> all(@RequestParam int current, @RequestParam int pageSize) {
+    public Page<Device> all(@RequestParam int current, @RequestParam int pageSize) {
         return deviceService.all(current, pageSize);
     }
 
     //数据存储
+
     @GetMapping("/data/json")
+    @Transactional
     public String save(@RequestBody String data) throws Exception {
         Gson gson = new Gson();
         GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
@@ -189,7 +192,7 @@ public class DeviceController {
 
     //依据设备状态（在线状态）查询获取设备列表
     @GetMapping("/search")
-    private Page<Device> searchByStatus(@RequestParam int status, @RequestParam int current, @RequestParam int pageSize) {
+    public Page<Device> searchByStatus(@RequestParam int status, @RequestParam int current, @RequestParam int pageSize) {
         return deviceService.searchByStatus(status, current, pageSize);
     }
 
