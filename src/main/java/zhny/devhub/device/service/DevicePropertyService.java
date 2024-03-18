@@ -17,6 +17,8 @@ public interface DevicePropertyService extends IService<DeviceProperty> {
 
     List<DeviceProperty> searchByDeviceId(Long deviceId);
 
+    DeviceProperty searchOne(Long deviceId, String deviceType);
+
 
 
 

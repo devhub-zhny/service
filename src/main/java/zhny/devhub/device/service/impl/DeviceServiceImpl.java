@@ -69,7 +69,9 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public Page<Device> all(int current, int pageSize) {
         return this.baseMapper.selectPage(
                 new Page<>(current, pageSize),
-                new QueryWrapper<>());
+                new QueryWrapper<Device>()
+                        .orderByAsc("device_physical_id")
+                        .orderByDesc("offline_time"));
     }
 
     @Override

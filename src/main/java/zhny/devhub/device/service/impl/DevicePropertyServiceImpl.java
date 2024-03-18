@@ -29,5 +29,15 @@ public class DevicePropertyServiceImpl extends ServiceImpl<DevicePropertyMapper,
         return this.baseMapper.selectList(queryWrapper);
     }
 
+    @Override
+    public DeviceProperty searchOne(Long deviceId, String deviceType) {
+
+        LambdaQueryWrapper<DeviceProperty> queryWrapper = Wrappers.lambdaQuery(DeviceProperty.class);
+        queryWrapper.eq(DeviceProperty::getDeviceId, deviceId)
+                .eq(DeviceProperty::getPropertyName,deviceType);
+
+        return this.baseMapper.selectOne(queryWrapper);
+    }
+
 
 }

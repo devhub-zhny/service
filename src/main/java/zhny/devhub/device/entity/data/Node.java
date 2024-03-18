@@ -12,7 +12,7 @@ import java.util.List;
 public class Node {
     private Long nodeId;
     // 设备异常状态
-    private String deviceStatus;
+    private String deviceStatus ;
     // 上级设备物理ID
     private Long parentDeviceId;
     // 设备开启状态

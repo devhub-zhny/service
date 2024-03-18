@@ -60,6 +60,7 @@ public interface Converter {
 
     @Mapping(target = "dataTime", source = "timestamp")
     @Mapping(target = "propertyValue", source = "value")
+    @Mapping(target = "propertyName", source = "sensorType")
     @Mapping(target = "propertyUnit", source = "unit")
     @Mapping(target = "isValid", source = "isOpen")
     DeviceData sensorToDeviceData(Sensor sensor);

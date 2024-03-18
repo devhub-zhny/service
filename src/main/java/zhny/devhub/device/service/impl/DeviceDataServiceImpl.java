@@ -33,6 +33,9 @@ public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceD
     @Resource
     DevicePropertyMapper devicePropertyMapper;
 
+    @Resource
+    DeviceDataMapper deviceDataMapper;
+
     @Override
     public List<DeviceData> searchByProperNameAndDeviceId(List<String> propertyNames, Long deviceID, Boolean isValid) {
         LambdaQueryWrapper<DeviceData> queryWrapper = Wrappers.lambdaQuery(DeviceData.class);
@@ -49,7 +52,12 @@ public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceD
                 .eq(DeviceProperty::getDeviceId, deviceData.getDeviceId())
                 .eq(DeviceProperty::getPropertyName, deviceData.getPropertyName());
         if (devicePropertyMapper.selectCount(deviceDataLambdaQueryWrapper) > 0) {
-            this.baseMapper.insert(deviceData);
+            LambdaQueryWrapper<DeviceData> q = Wrappers.lambdaQuery(DeviceData.class)
+                    .eq(DeviceData::getDeviceId,deviceData.getDeviceId())
+                    .eq(DeviceData::getDataTime,deviceData.getDataTime());
+            if (deviceDataMapper.selectCount(q) == 0){
+                this.baseMapper.insert(deviceData);
+            }
         } else {
             log.info("device:-" + deviceData.getDeviceId() + "-" + deviceData.getPropertyName() + "not exist");
         }

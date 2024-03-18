@@ -4,7 +4,6 @@ package zhny.devhub.device.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
 import zhny.devhub.device.entity.DeviceData;
@@ -75,14 +74,14 @@ public class DeviceController {
         deviceService.bind(id);
     }
 
-    // 获取所有设备
+    // 获取所有设备，并按先ID，后时间排序，ID小，时间近的在前
     @GetMapping("/all")
     private Page<Device> all(@RequestParam int current, @RequestParam int pageSize) {
         return deviceService.all(current, pageSize);
     }
 
     //数据存储
-    @GetMapping("/data")
+    @GetMapping("/data/json")
     public String save(@RequestBody String data) throws Exception {
         Gson gson = new Gson();
         GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
@@ -143,6 +142,7 @@ public class DeviceController {
                     device.setDeviceState(sensor.getDeviceStatus());
                     device.setDeviceStatus(sensor.getIsOpen());
                     deviceService.updateById(temp);
+                    device = temp;
                 }else{
                     deviceService.save(device);
                 }
@@ -150,24 +150,20 @@ public class DeviceController {
                 log.error("DeviceController.save中，插入 Device 失败");
             }
 
-            DeviceProperty deviceProperty = DeviceProperty.builder()
-                    .deviceId(device.getDeviceId())
-                    .propertyName(sensor.getSensorType())
-                    .build();
-            try {
-                devicePropertyService.saveOrUpdate(deviceProperty);
-            } catch (Exception e) {
-                log.error("DeviceController.save中，插入 DeviceProperty 失败");
+            if (devicePropertyService.searchOne(device.getDeviceId(),sensor.getSensorType()) == null){
+                DeviceProperty deviceProperty = DeviceProperty.builder()
+                        .deviceId(device.getDeviceId())
+                        .propertyName(sensor.getSensorType())
+                        .build();
+                try {
+                    devicePropertyService.save(deviceProperty);
+                } catch (Exception e) {
+                    log.error("DeviceController.save中，插入 DeviceProperty 失败");
+                }
             }
-
             DeviceData deviceData = converter.sensorToDeviceData(sensor);
             deviceData.setDeviceId(device.getDeviceId());
-            deviceData.setPropertyName(sensor.getSensorType());
-            try {
-                deviceDataService.save(deviceData);
-            } catch (Exception e) {
-                log.error("DeviceController.save中，插入 DeviceData 失败");
-            }
+            deviceDataService.insert(deviceData);
         }
 
         return data;
@@ -191,7 +187,7 @@ public class DeviceController {
         return deviceVo;
     }
 
-    //依据设备状态查询获取设备列表
+    //依据设备状态（在线状态）查询获取设备列表
     @GetMapping("/search")
     private Page<Device> searchByStatus(@RequestParam int status, @RequestParam int current, @RequestParam int pageSize) {
         return deviceService.searchByStatus(status, current, pageSize);
@@ -230,7 +226,7 @@ public class DeviceController {
                 .map(Device::getDevicePhysicalId)
                 .collect(Collectors.toList());
 
-        boolean isEmptyExistIdList = existIdList.isEmpty();
+        boolean isEmptyExistIdList = !existIdList.isEmpty();
 
         List<Device> existingDevices = new ArrayList<>();
         List<Device> newDevices = new ArrayList<>();

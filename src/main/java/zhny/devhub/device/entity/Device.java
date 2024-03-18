@@ -35,13 +35,13 @@ public class Device implements Serializable {
     private LocalDateTime offlineTime;
 
     // 设备是否开启
-    private Boolean deviceStatus = false;
+    private Boolean deviceStatus = true;
 
     // 设备地址
     private String deviceAddress;
 
     // 设备异常状态
-    private String deviceState;
+    private String deviceState = "正常";
 
     private String deviceName = "未设置名称";
 
