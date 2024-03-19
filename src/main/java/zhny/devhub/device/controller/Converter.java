@@ -4,7 +4,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import zhny.devhub.device.entity.Device;
 import zhny.devhub.device.entity.DeviceData;
-import zhny.devhub.device.entity.DeviceProperty;
 import zhny.devhub.device.entity.data.Gateway;
 import zhny.devhub.device.entity.data.Node;
 import zhny.devhub.device.entity.data.Sensor;

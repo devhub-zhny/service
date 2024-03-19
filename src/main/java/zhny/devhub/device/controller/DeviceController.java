@@ -119,7 +119,7 @@ public class DeviceController {
         List<Device> allExistDevices = Stream.of(existingdevice)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        if (allExistDevices.size() > 0){
+        if (allExistDevices.size() > 0) {
             List<Device> devicesToUpdate = allExistDevices.stream()
                     .map(oldDevice -> {
                         Device device = deviceService.searchByPhysicalID(oldDevice.getDevicePhysicalId());
@@ -141,19 +141,19 @@ public class DeviceController {
             Device device = converter.sensorToDevice(sensor);
             try {
                 Device temp = deviceService.searchByPhysicalID(sensor.getSensorId());
-                if( temp != null){
+                if (temp != null) {
                     device.setDeviceState(sensor.getDeviceStatus());
                     device.setDeviceStatus(sensor.getIsOpen());
                     deviceService.updateById(temp);
                     device = temp;
-                }else{
+                } else {
                     deviceService.save(device);
                 }
             } catch (Exception e) {
                 log.error("DeviceController.save中，插入 Device 失败");
             }
 
-            if (devicePropertyService.searchOne(device.getDeviceId(),sensor.getSensorType()) == null){
+            if (devicePropertyService.searchOne(device.getDeviceId(), sensor.getSensorType()) == null) {
                 DeviceProperty deviceProperty = DeviceProperty.builder()
                         .deviceId(device.getDeviceId())
                         .propertyName(sensor.getSensorType())
@@ -192,8 +192,12 @@ public class DeviceController {
 
     //依据设备状态（在线状态）查询获取设备列表
     @GetMapping("/search")
-    public Page<Device> searchByStatus(@RequestParam int status, @RequestParam int current, @RequestParam int pageSize) {
-        return deviceService.searchByStatus(status, current, pageSize);
+    public Page<Device> searchByStatus(@RequestParam(required = false) Boolean status,
+                                       @RequestParam(required = false) String state,
+                                       @RequestParam(required = false) Boolean bind,
+                                       @RequestParam int current,
+                                       @RequestParam int pageSize) {
+        return deviceService.searchByStatus(status, state, bind, current, pageSize);
     }
 
 
@@ -246,8 +250,6 @@ public class DeviceController {
         partitionedDevices.put(false, newDevices);
         return partitionedDevices;
     }
-
-
 
 
 }

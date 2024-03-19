@@ -22,7 +22,7 @@ public interface DeviceService extends IService<Device> {
 
     void bind(Long id);
 
-    Page<Device> searchByStatus(int status,int current, int pageSize);
+    Page<Device> searchByStatus(Boolean status,String state, Boolean bind,int current, int pageSize);
 
     Device searchByPhysicalID(Long physicalId);
 

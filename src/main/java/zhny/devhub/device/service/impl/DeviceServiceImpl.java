@@ -38,7 +38,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
             return switchVo;
         }
 
-        Boolean bind = device.isBinding();
+        Boolean bind = device.getIsBinding();
         if (!bind) {
             log.info(id + "设备还没绑定");
             return switchVo;
@@ -78,7 +78,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     public void bind(Long id) {
         Device device = this.baseMapper.selectById(id);
         if (device != null) {
-            device.setBinding(true);
+            device.setIsBinding(true);
             this.baseMapper.updateById(device);
             log.info(device.getDeviceName() + "设备绑定成功");
         } else {
@@ -88,10 +88,12 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     }
 
     @Override
-    public Page<Device> searchByStatus(int status, int current, int pageSize) {
+    public Page<Device> searchByStatus(Boolean status, String state, Boolean bind, int current, int pageSize) {
         Page<Device> page = new Page<>(current, pageSize);
         LambdaQueryWrapper<Device> queryWrapper = Wrappers.lambdaQuery(Device.class)
-                .eq(status != 0, Device::getDeviceStatus, status);
+                .eq(status != null, Device::getDeviceStatus, status)
+                .eq(bind != null,Device::getIsBinding,bind)
+                .eq(state != null, Device::getDeviceState,state);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
 
