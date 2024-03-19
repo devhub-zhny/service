@@ -93,7 +93,9 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         LambdaQueryWrapper<Device> queryWrapper = Wrappers.lambdaQuery(Device.class)
                 .eq(status != null, Device::getDeviceStatus, status)
                 .eq(bind != null,Device::getIsBinding,bind)
-                .eq(state != null, Device::getDeviceState,state);
+                .eq(state != null, Device::getDeviceState,state)
+                .orderByAsc(Device::getDevicePhysicalId)
+                .orderByDesc(Device::getOfflineTime);
         return this.baseMapper.selectPage(page, queryWrapper);
     }
 
