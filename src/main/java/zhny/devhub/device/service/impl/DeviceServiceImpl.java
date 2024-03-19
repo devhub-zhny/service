@@ -35,12 +35,14 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         SwitchVo switchVo = new SwitchVo();
         if (device == null) {
             log.info(id + "设备不存在");
+            switchVo.setMessage("设备不存在");
             return switchVo;
         }
 
         Boolean bind = device.getIsBinding();
         if (!bind) {
             log.info(id + "设备还没绑定");
+            switchVo.setMessage("设备还没绑定");
             return switchVo;
         }
 
@@ -55,6 +57,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         // 更新数据库
         device.setDeviceStatus(!device.getDeviceStatus());
         this.baseMapper.updateById(device);
+        switchVo.setMessage("操作成功");
         log.info(id + "开关操作成功");
 
         // 构造返回对象

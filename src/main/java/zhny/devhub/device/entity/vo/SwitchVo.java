@@ -13,6 +13,8 @@ public class SwitchVo {
 
     private boolean open;
 
+    private String message;
+
 
 
 }
