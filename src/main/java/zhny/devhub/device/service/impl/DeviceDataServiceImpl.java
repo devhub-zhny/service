@@ -41,6 +41,7 @@ public class DeviceDataServiceImpl extends ServiceImpl<DeviceDataMapper, DeviceD
         LambdaQueryWrapper<DeviceData> queryWrapper = Wrappers.lambdaQuery(DeviceData.class);
         queryWrapper.eq(DeviceData::getDeviceId, deviceID)
                 .in(DeviceData::getPropertyName, propertyNames)
+                .orderByAsc(DeviceData::getDataTime)
                 .eq(isValid != null, DeviceData::getIsValid, isValid);
 
         return this.baseMapper.selectList(queryWrapper);

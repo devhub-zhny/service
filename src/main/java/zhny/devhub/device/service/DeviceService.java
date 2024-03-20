@@ -20,7 +20,8 @@ public interface DeviceService extends IService<Device> {
 
     Page<Device> all(int current, int pageSize);
 
-    void bind(Long id);
+    String bind(Long id, boolean isBind);
+
 
     Page<Device> searchByStatus(Boolean status,String state, Boolean bind,int current, int pageSize);
 

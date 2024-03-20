@@ -78,18 +78,23 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
     }
 
     @Override
-    public void bind(Long id) {
+    public String bind(Long id, boolean isBind) {
         Device device = this.baseMapper.selectById(id);
         if (device != null) {
-            device.setIsBinding(true);
+            device.setIsBinding(isBind);
             this.baseMapper.updateById(device);
-            log.info(device.getDeviceName() + "设备绑定成功");
+            log.info(device.getDevicePhysicalId() + "设备绑定成功");
+            if (isBind){
+                return "物理设备编号"+device.getDevicePhysicalId() + "设备绑定成功";
+            }
+            return "物理设备编号"+device.getDevicePhysicalId() + "设备解绑成功";
+
         } else {
             log.info(id + "设备不存在");
+            return "设备编号"+id + "设备不存在";
         }
 
     }
-
     @Override
     public Page<Device> searchByStatus(Boolean status, String state, Boolean bind, int current, int pageSize) {
         Page<Device> page = new Page<>(current, pageSize);

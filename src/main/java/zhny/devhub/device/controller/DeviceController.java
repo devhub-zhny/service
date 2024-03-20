@@ -65,15 +65,25 @@ public class DeviceController {
 
     // 删除设备
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        deviceService.removeById(id);
+    public String delete(@PathVariable Long id) {
+        try {
+            deviceService.removeById(id);
+            log.info("删除成功");
+            return "删除成功";
+        }catch (Exception e){
+            log.error(id+"设备不存在");
+            return "设备不存在";
+        }
+
     }
 
     // 绑定设备
     @PatchMapping("/bind/{id}")
-    public void bind(@PathVariable Long id) {
-        deviceService.bind(id);
+    public String bind(@PathVariable Long id, @RequestParam boolean isBind) {
+        return deviceService.bind(id,isBind);
     }
+
+
 
     // 获取所有设备，并按先ID，后时间排序，ID小，时间近的在前
     @GetMapping("/all")
@@ -176,11 +186,17 @@ public class DeviceController {
     // 获取传感器的值 依据设备ID查DeviceProperty获取属性名称，再结合二者查DeviceData
     @GetMapping("/data/{deviceId}")
     public DeviceVo getData(@PathVariable Long deviceId, @RequestParam(required = false) Boolean isValid) {
+        Device device = deviceService.getById(deviceId);
+        if (!device.getIsBinding()){
+            DeviceVo vo = new DeviceVo();
+            vo.setDeviceName("该设备未绑定无法查看数据,请先绑定");
+            return vo;
+        }
         List<DeviceProperty> deviceProperties = devicePropertyService.searchByDeviceId(deviceId);
         List<String> propertyNames = deviceProperties.stream()
                 .map(DeviceProperty::getPropertyName)
                 .collect(Collectors.toList());
-        Device device = deviceService.getById(deviceId);
+
         DeviceVo deviceVo = converter.toDeviceVo(device);
         if (!propertyNames.isEmpty()) {
             // isValid为null则返回全部数据，为false则返回全部历史数据，为true则返回最新数据
