@@ -46,22 +46,39 @@ public class DeviceController {
     @Resource
     private Converter converter;
 
+
     @GetMapping("/test")
     public String test(@RequestBody String data) {
         return data;
     }
 
+
     // 创建设备
     @PostMapping("/insert")
     public void insert(@RequestBody Device device) {
-        deviceService.save(device);
+        deviceService.saveOrUpdate(device);
     }
+
+    // 修改设备名
+    @PatchMapping("/updateName/{id}")
+    public String updateName(@PathVariable Long id,@RequestParam String name){
+        Device device = deviceService.getById(id);
+        if(device == null){
+            return "设备不存在";
+        }
+        device.setDeviceName(name);
+        deviceService.updateById(device);
+        return "修改成功";
+    }
+
+
 
     // 开关设备
     @PatchMapping("/switch/{id}")
     public SwitchVo open(@PathVariable Long id) {
         return deviceService.open(id);
     }
+
 
     // 删除设备
     @DeleteMapping("/{id}")
@@ -70,19 +87,19 @@ public class DeviceController {
             deviceService.removeById(id);
             log.info("删除成功");
             return "删除成功";
-        }catch (Exception e){
-            log.error(id+"设备不存在");
+        } catch (Exception e) {
+            log.error(id + "设备不存在");
             return "设备不存在";
         }
 
     }
 
+
     // 绑定设备
     @PatchMapping("/bind/{id}")
     public String bind(@PathVariable Long id, @RequestParam boolean isBind) {
-        return deviceService.bind(id,isBind);
+        return deviceService.bind(id, isBind);
     }
-
 
 
     // 获取所有设备，并按先ID，后时间排序，ID小，时间近的在前
@@ -91,8 +108,8 @@ public class DeviceController {
         return deviceService.all(current, pageSize);
     }
 
-    //数据存储
 
+    //数据存储
     @GetMapping("/data/json")
     @Transactional
     public String save(@RequestBody String data) throws Exception {
@@ -182,12 +199,13 @@ public class DeviceController {
         return data;
     }
 
+
     // 传感器详情包括数据
     // 获取传感器的值 依据设备ID查DeviceProperty获取属性名称，再结合二者查DeviceData
     @GetMapping("/data/{deviceId}")
     public DeviceVo getData(@PathVariable Long deviceId, @RequestParam(required = false) Boolean isValid) {
         Device device = deviceService.getById(deviceId);
-        if (!device.getIsBinding()){
+        if (!device.getIsBinding()) {
             DeviceVo vo = new DeviceVo();
             vo.setDeviceName("该设备未绑定无法查看数据,请先绑定");
             return vo;
@@ -206,6 +224,7 @@ public class DeviceController {
         return deviceVo;
     }
 
+
     //依据设备状态（在线状态）查询获取设备列表
     @GetMapping("/search")
     public Page<Device> searchByStatus(@RequestParam(required = false) Boolean status,
@@ -215,7 +234,6 @@ public class DeviceController {
                                        @RequestParam int pageSize) {
         return deviceService.searchByStatus(status, state, bind, current, pageSize);
     }
-
 
     private List<Node> getAllNodesWithParentDeviceId(List<Gateway> allGateways) {
         return allGateways.stream()
