@@ -1,17 +1,24 @@
 package zhny.devhub.device.service;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import zhny.devhub.device.entity.DeviceData;
+import zhny.devhub.device.entity.data.Gateway;
+import zhny.devhub.device.utils.Hardware;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @SpringBootTest
 class DeviceDataServiceTest {
+
+
     @Resource
     DeviceDataService deviceDataService;
+
 
     @Test
     public void test(){
@@ -27,5 +34,17 @@ class DeviceDataServiceTest {
 //        deviceDataService.insert(data);
 
     }
+
+    @Test
+    public void testH(){
+        Hardware hardware = new Hardware();
+        List<Gateway> gatewayList = hardware.parseSensorData();
+        List<Gateway> switchList = hardware.parseSwitchData();
+        System.out.println(gatewayList.size());
+
+    }
+
+
+
 
 }

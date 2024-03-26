@@ -116,6 +116,11 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         return device;
     }
 
+    @Override
+    public List<Device> searchByPhysicalIds(Long physicalIds) {
+        return this.baseMapper.searchByPhysicalIds(physicalIds);
+    }
+
     // 根据物理ID查询设备，返回Optional对象
     private Optional<Device> searchByPhysicalIDOptional(Long physicalId) {
         if (physicalId == null) {

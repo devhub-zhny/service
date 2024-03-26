@@ -15,6 +15,7 @@ import zhny.devhub.device.entity.vo.SwitchVo;
 import zhny.devhub.device.service.DeviceDataService;
 import zhny.devhub.device.service.DevicePropertyService;
 import zhny.devhub.device.service.DeviceService;
+import zhny.devhub.device.utils.Hardware;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -116,8 +117,12 @@ public class DeviceController {
         Gson gson = new Gson();
         GatewayData gatewayData = gson.fromJson(data, GatewayData.class);
 
-        // 获取所有网关列表
+//        // 获取所有网关列表
         List<Gateway> allGateways = gatewayData.getGateways();
+
+//        Hardware hardware = new Hardware();
+//        // 获取所有网关列表
+//        List<Gateway> allGateways = hardware.parseSwitchData();
 
         // 获取所有节点列表，并设置上级设备
         List<Node> allNodes = getAllNodesWithParentDeviceId(allGateways);
@@ -267,12 +272,12 @@ public class DeviceController {
                 .map(Device::getDevicePhysicalId)
                 .collect(Collectors.toList());
 
-        boolean isEmptyExistIdList = !existIdList.isEmpty();
+        boolean isEmptyExistIdList = existIdList.isEmpty();
 
         List<Device> existingDevices = new ArrayList<>();
         List<Device> newDevices = new ArrayList<>();
         allDevices.forEach(device -> {
-            if (isEmptyExistIdList || existIdList.contains(device.getDevicePhysicalId())) {
+            if (!isEmptyExistIdList && existIdList.contains(device.getDevicePhysicalId())) {
                 existingDevices.add(device);
             } else {
                 newDevices.add(device);

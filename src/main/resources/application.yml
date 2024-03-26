@@ -31,6 +31,21 @@ spring:
     baseline-on-migrate: false
     baseline-version: 0
     baseline-description: <<Flyway Baseline>>
+#  mqtt:
+#    #MQTT-服务器连接地址，如果有多个，用逗号隔开
+#    host: tws://47.120.63.23:8083
+#    #MQTT-连接服务器默认客户端ID
+#    clientId: mqtt_id
+#    #MQTT-用户名
+#    username: admin
+#    #MQTT-密码
+#    password: admin
+#    #MQTT-默认的消息推送主题，实际可在调用接口时指定
+#    topic: zhny
+#    #连接超时
+#    timeout: 1000
+#    #设置会话心跳时间
+#    keepalive: 100
 
 
 mybatis-plus:

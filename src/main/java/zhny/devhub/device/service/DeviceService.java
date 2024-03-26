@@ -27,4 +27,8 @@ public interface DeviceService extends IService<Device> {
 
     Device searchByPhysicalID(Long physicalId);
 
+    List<Device> searchByPhysicalIds(Long physicalIds);
+
+
+
 }
