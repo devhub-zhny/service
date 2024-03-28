@@ -4,6 +4,7 @@ package zhny.devhub.device.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import zhny.devhub.device.entity.Device;
@@ -15,6 +16,7 @@ import zhny.devhub.device.entity.vo.SwitchVo;
 import zhny.devhub.device.service.DeviceDataService;
 import zhny.devhub.device.service.DevicePropertyService;
 import zhny.devhub.device.service.DeviceService;
+import zhny.devhub.device.service.MqttService;
 import zhny.devhub.device.utils.Hardware;
 
 import javax.annotation.Resource;
@@ -47,6 +49,9 @@ public class DeviceController {
     @Resource
     private Converter converter;
 
+    @Autowired
+    private MqttService mqttService;
+
 
     @GetMapping("/test")
     public String test(@RequestBody String data) {
@@ -77,7 +82,10 @@ public class DeviceController {
     // 开关设备
     @PatchMapping("/switch/{id}")
     public SwitchVo open(@PathVariable Long id) {
-        return deviceService.open(id);
+        SwitchVo vo = deviceService.open(id);
+        // 向MQTT服务器发送指令
+        mqttService.publish(vo.toString(),"zhny");
+        return vo;
     }
 
 

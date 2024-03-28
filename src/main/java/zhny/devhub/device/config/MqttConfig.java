@@ -31,9 +31,9 @@ public class MqttConfig {
 
     public String topic1 = "zhny";
 
-    public String topic2;
+    public String topic2 = "topic1";
 
-    public String topic3;
+    public String topic3 = "topic2";
 
     @Bean//注入Spring
     public MyMqttClient myMqttClient() {

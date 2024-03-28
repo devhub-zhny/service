@@ -121,9 +121,6 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
      */
     public static String getActiveProfile() {
         final String[] activeProfiles = getActiveProfiles();
-        if (activeProfiles == null) {
-            return null;
-        }
         return activeProfiles[0];
     }
 

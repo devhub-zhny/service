@@ -86,18 +86,19 @@ public class MyMqttCallback implements MqttCallbackExtended {
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, new String(mqttMessage.getPayload()));
+        // TODO 对订阅信息进行操作
         /**
          * 根据订阅的主题分别处理业务。可以通过if-else或者策略模式来分别处理不同的主题消息。
          */
         //topic1主题
-        if (topic.equals("ABC")) {
+        if (topic.equals("topic1")) {
             Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
             //TODO 业务处理
             //doSomething1(maps);
             log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，{}业务处理消息内容完成", topic, "TodoService1");
         }
         //topic2主题
-        if (topic.equals("A/b/1qaz")) {
+        if (topic.equals("topic2")) {
             Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
             //TODO 业务处理
             //doSomething2(maps);

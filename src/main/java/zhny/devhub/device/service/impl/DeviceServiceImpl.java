@@ -65,6 +65,8 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         switchVo.setDeviceType(device.getDeviceCategoryName());
         switchVo.setIds(ids);
 
+
+
         return switchVo;
     }
 
