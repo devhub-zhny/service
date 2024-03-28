@@ -125,15 +125,17 @@
             <version>10.5.0</version>
         </dependency>
 
+        <!-- spring-integration-mqtt依赖 -->
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-mqtt</artifactId>
-            <version>5.5.9</version>
+            <version>6.1.2</version>
         </dependency>
+
         <dependency>
-            <groupId>org.eclipse.paho</groupId>
-            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-            <version>1.2.2</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.75</version>
         </dependency>
 
 

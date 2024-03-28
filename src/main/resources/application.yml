@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://47.120.63.23:3306/zhny?characterEncoding=utf8&useSSL=true
-    username: root
+    username: test
     password: 123456
 #  redis:
 #    url: jdbc:mysql://1.94.61.174:3306/carpooling?characterEncoding=utf8&useSSL=true
@@ -31,21 +31,20 @@ spring:
     baseline-on-migrate: false
     baseline-version: 0
     baseline-description: <<Flyway Baseline>>
-#  mqtt:
-#    #MQTT-服务器连接地址，如果有多个，用逗号隔开
-#    host: tws://47.120.63.23:8083
-#    #MQTT-连接服务器默认客户端ID
-#    clientId: mqtt_id
-#    #MQTT-用户名
-#    username: admin
-#    #MQTT-密码
-#    password: admin
-#    #MQTT-默认的消息推送主题，实际可在调用接口时指定
-#    topic: zhny
-#    #连接超时
-#    timeout: 1000
-#    #设置会话心跳时间
-#    keepalive: 100
+  ## MQTT 基本连接参数 ##
+  mqtt:
+    host: ws://47.120.63.23:8083/mqtt
+    #  host: tcp://broker.emqx.io:1883
+    userName: zhny
+    passWord: zhny
+    qos: 1
+    clientId: ClientId_local #ClientId_local必须唯一。
+    timeout: 10 # 超时时间
+    keepalive: 30 # 保持连接时间
+    clearSession: true   # 清除会话(设置为false,断开连接，重连后使用原来的会话 保留订阅的主题，能接收离线期间的消息)
+    topic1: zhny  # 通配符主题只能用于订阅，不能用于发布。+：表示单层通配符，#：表示多层通配符
+    topic2: A/abc
+    topic3: ABC
 
 
 mybatis-plus:
