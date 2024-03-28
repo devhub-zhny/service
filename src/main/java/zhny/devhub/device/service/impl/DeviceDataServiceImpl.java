@@ -1,6 +1,5 @@
 package zhny.devhub.device.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +10,9 @@ import zhny.devhub.device.mapper.DevicePropertyMapper;
 import zhny.devhub.device.service.DeviceDataService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import zhny.devhub.device.service.DeviceService;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * <p>

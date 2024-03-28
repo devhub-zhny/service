@@ -3,7 +3,6 @@ package zhny.devhub.device.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import zhny.devhub.device.utils.MyMqttClient;
@@ -16,11 +15,11 @@ public class MqttConfig {
     public String host = "ws://47.120.63.23:8083/mqtt";
 //    public String host = "ws://broker.emqx.io:8083/mqtt";
 
-    public String username = "zhny";
+    public String username = "ac";
 
-    public String password = "zhny";
+    public String password = "******";
 
-    public String clientId = "zhny001";
+    public String clientId = "skdfjhakhdfh";
 
     public int timeOut = 10;
 

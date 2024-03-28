@@ -7,6 +7,8 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import zhny.devhub.device.config.MqttConfig;
+import zhny.devhub.device.controller.DeviceController;
+import zhny.devhub.device.entity.data.Gateway;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public class MyMqttCallback implements MqttCallbackExtended {
 
         myMqttClient.subscribe(mqttConfig.topic1, 2);
         myMqttClient.subscribe(mqttConfig.topic2, 2);
-        myMqttClient.subscribe(mqttConfig.topic3, 2);
+//        myMqttClient.subscribe(mqttConfig.topic3, 2);
 
         List<String> topicList = new ArrayList<>();
         topicList.add(mqttConfig.topic1);
@@ -88,31 +90,28 @@ public class MyMqttCallback implements MqttCallbackExtended {
      */
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-        log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, new String(mqttMessage.getPayload()));
         // TODO 对订阅信息进行操作
         /**
          * 根据订阅的主题分别处理业务。可以通过if-else或者策略模式来分别处理不同的主题消息。
          */
-        //topic1主题
-        if (topic.equals("switch")) {
-            Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
-            //TODO 业务处理
-            //doSomething1(maps);
-            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，{}业务处理消息内容完成", topic, "TodoService1");
-        }
-        //topic2主题
-        if (topic.equals("open")) {
-            Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
-            //TODO 业务处理
-            //doSomething2(maps);
-            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，{}业务处理消息内容完成", topic, "TodoService2");
-        }
-        //topic3主题
+        Hardware hardware = new Hardware();
+        // topic1主题
         if (topic.equals("sensor")) {
-            Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
+            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, new String(mqttMessage.getPayload()));
+            List<Gateway> allGateways = hardware.parseSensorData(mqttMessage.getPayload().toString());
+            System.out.println(allGateways.size());
+//            new DeviceController().insertGatewayDevice(allGateways);
             //TODO 业务处理
-            //doSomething2(maps);
-            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，{}业务处理消息内容完成", topic, "TodoService2");
+
+
+        }
+        // topic2主题
+        if (topic.equals("switch")) {
+            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, new String(mqttMessage.getPayload()));
+            List<Gateway> allGateways = hardware.parseSwitchData(mqttMessage.getPayload().toString());
+            System.out.println(allGateways.size());
+//            new DeviceController().insertGatewayDevice(allGateways);
+            //TODO 业务处理
         }
     }
 

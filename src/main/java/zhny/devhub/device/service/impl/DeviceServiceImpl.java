@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import zhny.devhub.device.entity.Device;
-import zhny.devhub.device.entity.DeviceProperty;
 import zhny.devhub.device.entity.vo.SwitchVo;
 import zhny.devhub.device.mapper.DeviceMapper;
 import zhny.devhub.device.service.DeviceService;

@@ -1,5 +1,6 @@
 package zhny.devhub.device.utils;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -10,13 +11,13 @@ public class MyMqttClient {
     /**
      * MQTT Broker 基本连接参数，用户名、密码为非必选参数
      */
-    private String host;
-    private String username;
-    private String password;
-    private String clientId;
-    private int timeout;
-    private int keepalive;
-    private boolean clearSession;
+    private String host = "ws://47.120.63.23:8083/mqtt";
+    private String username = "zhny";
+    private String password = "zhny";
+    private String clientId = "asdfafaf";
+    private int timeout = 20;
+    private int keepalive = 60;
+    private boolean clearSession = true;
 
     /**
      * MQTT 客户端
@@ -88,7 +89,7 @@ public class MyMqttClient {
      * @param topic
      */
     public void publish(String pushMessage, String topic) {
-        publish(pushMessage, topic, 2, false);
+        publish(pushMessage, topic, 0, false);
     }
 
     /**
