@@ -26,7 +26,6 @@ public class MqttConfig {
 
     public int keepAlive = 60;
 
-
     public boolean clearSession = true;
 
     public String topic1 = "sensor";
