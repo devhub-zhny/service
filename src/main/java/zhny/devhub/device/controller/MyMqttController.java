@@ -26,7 +26,7 @@ public class MyMqttController {
     }
 
     @PostMapping("/send")
-    public void removeTopic(String msgContent, String topic) {
+    public void sendMessage(String msgContent, String topic) {
         mqttService.publish(msgContent, topic);
     }
 

@@ -29,11 +29,11 @@ public class MqttConfig {
 
     public boolean clearSession = true;
 
-    public String topic1 = "zhny";
+    public String topic1 = "sensor";
 
-    public String topic2 = "topic1";
+    public String topic2 = "switch";
 
-    public String topic3 = "topic2";
+    public String topic3 = "open";
 
     @Bean//注入Spring
     public MyMqttClient myMqttClient() {
@@ -42,7 +42,6 @@ public class MqttConfig {
             try {
                 myMqttClient.connect();
                 // 这里可以订阅主题，推荐放到 MqttCallbackExtended.connectComplete方法中
-                myMqttClient.subscribe("zhny", 2);
                 return myMqttClient;
             } catch (MqttException e) {
                 log.error("== MqttConfig ==> MQTT connect exception, connect time = {}", i);

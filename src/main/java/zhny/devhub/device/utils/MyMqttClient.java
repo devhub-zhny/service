@@ -88,7 +88,7 @@ public class MyMqttClient {
      * @param topic
      */
     public void publish(String pushMessage, String topic) {
-        publish(pushMessage, topic, 0, false);
+        publish(pushMessage, topic, 2, false);
     }
 
     /**

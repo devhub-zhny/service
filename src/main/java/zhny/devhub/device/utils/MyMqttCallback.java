@@ -38,7 +38,10 @@ public class MyMqttCallback implements MqttCallbackExtended {
         String connectMode = reconnect ? "重连" : "直连";
         log.info("== MyMqttCallback ==> MQTT 连接成功，连接方式：{}，serverURI：{}", connectMode, serverURI);
         //订阅主题
+
         myMqttClient.subscribe(mqttConfig.topic1, 2);
+        myMqttClient.subscribe(mqttConfig.topic2, 2);
+        myMqttClient.subscribe(mqttConfig.topic3, 2);
 
         List<String> topicList = new ArrayList<>();
         topicList.add(mqttConfig.topic1);
@@ -91,14 +94,21 @@ public class MyMqttCallback implements MqttCallbackExtended {
          * 根据订阅的主题分别处理业务。可以通过if-else或者策略模式来分别处理不同的主题消息。
          */
         //topic1主题
-        if (topic.equals("topic1")) {
+        if (topic.equals("switch")) {
             Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
             //TODO 业务处理
             //doSomething1(maps);
             log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，{}业务处理消息内容完成", topic, "TodoService1");
         }
         //topic2主题
-        if (topic.equals("topic2")) {
+        if (topic.equals("open")) {
+            Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
+            //TODO 业务处理
+            //doSomething2(maps);
+            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，{}业务处理消息内容完成", topic, "TodoService2");
+        }
+        //topic3主题
+        if (topic.equals("sensor")) {
             Map maps = (Map) JSON.parse(new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
             //TODO 业务处理
             //doSomething2(maps);
