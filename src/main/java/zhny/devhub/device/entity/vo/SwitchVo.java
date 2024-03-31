@@ -15,6 +15,9 @@ public class SwitchVo {
 
     private String message;
 
+    // 开启状态
+    private boolean State;
+
 
 
 }

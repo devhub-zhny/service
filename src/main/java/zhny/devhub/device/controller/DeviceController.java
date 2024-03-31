@@ -21,7 +21,6 @@ import zhny.devhub.device.service.MqttService;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * <p>
@@ -81,9 +80,15 @@ public class DeviceController {
     @PatchMapping("/switch/{id}")
     public SwitchVo open(@PathVariable Long id) {
         SwitchVo vo = deviceService.open(id);
+        String res = "CCAA"+Long.toHexString(vo.getIds().get(vo.getIds().size()-1));
+        if (vo.isState()){
+            res = res+"01";
+        }else {
+            res = res+"00";
+        }
         // 向MQTT服务器发送指令
 
-        mqttService.publish(vo.toString(),"open");
+        mqttService.publish(res,"open");
         return vo;
     }
 

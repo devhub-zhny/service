@@ -76,9 +76,11 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         }
 
         // 更新数据库
-        device.setDeviceStatus(!device.getDeviceStatus());
+        boolean status = device.getDeviceStatus();
+        device.setDeviceStatus(!status);
         this.baseMapper.updateById(device);
         switchVo.setMessage("操作成功");
+        switchVo.setState(!status);
         log.info(id + "开关操作成功");
 
         // 构造返回对象
