@@ -14,7 +14,7 @@ public class MyMqttClient {
     private String host = "ws://47.120.63.23:8083/mqtt";
     private String username = "zhny";
     private String password = "zhny";
-    private String clientId = "asdfafaf";
+    private String clientId = "asdfafafadsadr";
     private int timeout = 20;
     private int keepalive = 60;
     private boolean clearSession = true;

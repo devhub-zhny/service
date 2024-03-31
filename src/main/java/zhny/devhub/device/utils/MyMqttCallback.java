@@ -1,25 +1,24 @@
 package zhny.devhub.device.utils;
 
-import com.alibaba.fastjson.JSON;
+
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import zhny.devhub.device.config.MqttConfig;
-import zhny.devhub.device.controller.DeviceController;
 import zhny.devhub.device.entity.data.Gateway;
+import zhny.devhub.device.service.DeviceService;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public class MyMqttCallback implements MqttCallbackExtended {
 
     //手动注入
     private MqttConfig mqttConfig = SpringUtils.getBean(MqttConfig.class);
+    private DeviceService deviceService = SpringUtils.getBean(DeviceService.class);
 
 
     private MyMqttClient myMqttClient;
@@ -97,20 +96,20 @@ public class MyMqttCallback implements MqttCallbackExtended {
         Hardware hardware = new Hardware();
         // topic1主题
         if (topic.equals("sensor")) {
-            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, new String(mqttMessage.getPayload()));
-            List<Gateway> allGateways = hardware.parseSensorData(mqttMessage.getPayload().toString());
-            System.out.println(allGateways.size());
-//            new DeviceController().insertGatewayDevice(allGateways);
+            String data = new String(mqttMessage.getPayload());
+            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic,data );
+            List<Gateway> allGateways = hardware.parseSensorData(data);
+            deviceService.insertGatewayDevice(allGateways);
             //TODO 业务处理
 
 
         }
         // topic2主题
         if (topic.equals("switch")) {
-            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, new String(mqttMessage.getPayload()));
-            List<Gateway> allGateways = hardware.parseSwitchData(mqttMessage.getPayload().toString());
-            System.out.println(allGateways.size());
-//            new DeviceController().insertGatewayDevice(allGateways);
+            String data = new String(mqttMessage.getPayload());
+            log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, data);
+            List<Gateway> allGateways = hardware.parseSwitchData(data);
+            deviceService.insertGatewayDevice(allGateways);
             //TODO 业务处理
         }
     }

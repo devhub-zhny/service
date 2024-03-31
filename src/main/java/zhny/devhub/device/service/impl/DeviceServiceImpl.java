@@ -5,16 +5,28 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import zhny.devhub.device.controller.Converter;
 import zhny.devhub.device.entity.Device;
+import zhny.devhub.device.entity.DeviceData;
+import zhny.devhub.device.entity.DeviceProperty;
+import zhny.devhub.device.entity.data.Gateway;
+import zhny.devhub.device.entity.data.Node;
+import zhny.devhub.device.entity.data.Sensor;
+import zhny.devhub.device.entity.data.Switch;
 import zhny.devhub.device.entity.vo.SwitchVo;
 import zhny.devhub.device.mapper.DeviceMapper;
+import zhny.devhub.device.service.DeviceDataService;
+import zhny.devhub.device.service.DevicePropertyService;
 import zhny.devhub.device.service.DeviceService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import zhny.devhub.device.service.MqttService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -27,6 +39,16 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> implements DeviceService {
+
+    @Resource
+    private DevicePropertyService devicePropertyService;
+
+    @Resource
+    private DeviceDataService deviceDataService;
+
+    @Resource
+    private Converter converter;
+
 
     @Override
     public SwitchVo open(Long id) {
@@ -122,13 +144,147 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device> impleme
         return this.baseMapper.searchByPhysicalIds(physicalIds);
     }
 
+    @Override
+    public void insertGatewayDevice(List<Gateway> allGateways){
+
+        // 获取所有节点列表，并设置上级设备
+        List<Node> allNodes = getAllNodesWithParentDeviceId(allGateways);
+
+        // 获取所有节点的开关列表，并设置上级设备
+        List<Switch> allSwitches = getAllSwitchesWithParentDeviceId(allNodes);
+
+        // 获取所有节点的传感器列表，并设置上级设备
+        List<Sensor> allSensors = getAllSensorsWithParentDeviceId(allNodes);
+
+        // 将网关、节点、开关分为两个部分：已存在和新设备
+        Map<Boolean, List<Device>> devicePartitioned = partitionDevices(allGateways, allNodes, allSwitches);
+
+        List<Device> existingDevice = devicePartitioned.get(true);
+        List<Device> newDevice = devicePartitioned.get(false);
+
+
+        // 新旧数据一起搞，真的让人很烦恼
+        // 新的直接插
+        List<Device> allNewDevices = Stream.of(newDevice)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        saveBatch(allNewDevices);
+
+        // 旧的更新呀
+        List<Device> allExistDevices = Stream.of(existingDevice)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        if (allExistDevices.size() > 0) {
+            List<Device> devicesToUpdate = allExistDevices.stream()
+                    .map(oldDeviceNewData -> {
+                        Device device = searchByPhysicalID(oldDeviceNewData.getDevicePhysicalId());
+                        device.setDeviceState(oldDeviceNewData.getDeviceState());
+                        device.setDeviceStatus(oldDeviceNewData.getDeviceStatus());
+                        device.setOfflineTime(oldDeviceNewData.getOfflineTime());
+                        return device;
+                    })
+                    .collect(Collectors.toList());
+            updateBatchById(devicesToUpdate);
+        }
+
+        // 少的怎么搞，少的先不搞
+
+
+        // TODO  待优化
+        // sensor & switch
+        // 这个插完还得插数据这块的思路是，依据设备物理ID查询得到设备ID，之后再插入两张表
+        for (Sensor sensor : allSensors) {
+            Device device = converter.sensorToDevice(sensor);
+            try {
+                Device temp = searchByPhysicalID(sensor.getSensorId());
+                if (temp != null) {
+                    device.setDeviceState(sensor.getDeviceStatus());
+                    device.setDeviceStatus(sensor.getIsOpen());
+                    updateById(temp);
+                    device = temp;
+                } else {
+                    save(device);
+                }
+            } catch (Exception e) {
+                log.error("DeviceController.save中，插入 Device 失败");
+            }
+
+            if (devicePropertyService.searchOne(device.getDeviceId(), sensor.getSensorType()) == null) {
+                DeviceProperty deviceProperty = DeviceProperty.builder()
+                        .deviceId(device.getDeviceId())
+                        .propertyName(sensor.getSensorType())
+                        .build();
+                try {
+                    devicePropertyService.save(deviceProperty);
+                } catch (Exception e) {
+                    log.error("DeviceController.save中，插入 DeviceProperty 失败");
+                }
+            }
+            DeviceData deviceData = converter.sensorToDeviceData(sensor);
+            deviceData.setDeviceId(device.getDeviceId());
+            deviceDataService.insert(deviceData);
+        }
+
+    }
+
     // 根据物理ID查询设备，返回Optional对象
-    private Optional<Device> searchByPhysicalIDOptional(Long physicalId) {
+    public Optional<Device> searchByPhysicalIDOptional(Long physicalId) {
         if (physicalId == null) {
             return Optional.empty();
         }
         return Optional.ofNullable(searchByPhysicalID(physicalId));
     }
+
+    public List<Node> getAllNodesWithParentDeviceId(List<Gateway> allGateways) {
+        return allGateways.stream()
+                .flatMap(gateway -> gateway.getNodes().stream()
+                        .peek(node -> node.setParentDeviceId(gateway.getGatewayId())))
+                .collect(Collectors.toList());
+    }
+
+    public List<Sensor> getAllSensorsWithParentDeviceId(List<Node> allNodes) {
+        return allNodes.stream()
+                .flatMap(node -> node.getSensors().stream()
+                        .peek(sensor -> sensor.setParentDeviceId(node.getNodeId())))
+                .collect(Collectors.toList());
+    }
+
+    public List<Switch> getAllSwitchesWithParentDeviceId(List<Node> allNodes) {
+        return allNodes.stream()
+                .flatMap(node -> node.getSwitches().stream()
+                        .peek(aSwitch -> aSwitch.setParentDeviceId(node.getNodeId())))
+                .collect(Collectors.toList());
+    }
+
+    // 按数据库是否存在分区
+    private Map<Boolean, List<Device>> partitionDevices(List<Gateway> allGateways, List<Node> allNodes, List<Switch> allSwitches) {
+        List<Device> allDevices = new ArrayList<>();
+        allDevices.addAll(converter.gatewayListToDeviceList(allGateways));
+        allDevices.addAll(converter.nodeListToDeviceList(allNodes));
+        allDevices.addAll(converter.switchListToDeviceList(allSwitches));
+
+        List<Long> existIdList = list().stream()
+                .map(Device::getDevicePhysicalId)
+                .collect(Collectors.toList());
+
+        boolean isEmptyExistIdList = existIdList.isEmpty();
+
+        List<Device> existingDevices = new ArrayList<>();
+        List<Device> newDevices = new ArrayList<>();
+        allDevices.forEach(device -> {
+            if (!isEmptyExistIdList && existIdList.contains(device.getDevicePhysicalId())) {
+                existingDevices.add(device);
+            } else {
+                newDevices.add(device);
+            }
+        });
+
+        Map<Boolean, List<Device>> partitionedDevices = new HashMap<>();
+        partitionedDevices.put(true, existingDevices);
+        partitionedDevices.put(false, newDevices);
+        return partitionedDevices;
+    }
+
 
 
 }

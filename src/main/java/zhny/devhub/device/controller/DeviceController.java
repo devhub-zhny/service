@@ -77,16 +77,15 @@ public class DeviceController {
     }
 
 
-
     // 开关设备
     @PatchMapping("/switch/{id}")
     public SwitchVo open(@PathVariable Long id) {
         SwitchVo vo = deviceService.open(id);
         // 向MQTT服务器发送指令
+
         mqttService.publish(vo.toString(),"open");
         return vo;
     }
-
 
     // 删除设备
     @DeleteMapping("/{id}")
@@ -117,7 +116,7 @@ public class DeviceController {
     }
 
 
-    //数据存储
+    //数据存储,传入JSON直接
     @GetMapping("/data/json")
     @Transactional
     public String save(@RequestBody String data) throws Exception {
@@ -127,10 +126,7 @@ public class DeviceController {
         // 获取所有网关列表
         List<Gateway> allGateways = gatewayData.getGateways();
 
-        // 获取所有网关列表
-//        List<Gateway> allGateways = new Hardware().parseSwitchData();
-
-        insertGatewayDevice(allGateways);
+        deviceService.insertGatewayDevice(allGateways);
         return data;
     }
 
@@ -169,137 +165,4 @@ public class DeviceController {
                                        @RequestParam int pageSize) {
         return deviceService.searchByStatus(status, state, bind, current, pageSize);
     }
-
-    private List<Node> getAllNodesWithParentDeviceId(List<Gateway> allGateways) {
-        return allGateways.stream()
-                .flatMap(gateway -> gateway.getNodes().stream()
-                        .peek(node -> node.setParentDeviceId(gateway.getGatewayId())))
-                .collect(Collectors.toList());
-    }
-
-    private List<Sensor> getAllSensorsWithParentDeviceId(List<Node> allNodes) {
-        return allNodes.stream()
-                .flatMap(node -> node.getSensors().stream()
-                        .peek(sensor -> sensor.setParentDeviceId(node.getNodeId())))
-                .collect(Collectors.toList());
-    }
-
-    private List<Switch> getAllSwitchesWithParentDeviceId(List<Node> allNodes) {
-        return allNodes.stream()
-                .flatMap(node -> node.getSwitches().stream()
-                        .peek(aSwitch -> aSwitch.setParentDeviceId(node.getNodeId())))
-                .collect(Collectors.toList());
-    }
-
-    // 按数据库是否存在分区
-    private Map<Boolean, List<Device>> partitionDevices(List<Gateway> allGateways, List<Node> allNodes, List<Switch> allSwitches) {
-        List<Device> allDevices = new ArrayList<>();
-        allDevices.addAll(converter.gatewayListToDeviceList(allGateways));
-        allDevices.addAll(converter.nodeListToDeviceList(allNodes));
-        allDevices.addAll(converter.switchListToDeviceList(allSwitches));
-
-        List<Long> existIdList = deviceService.list().stream()
-                .map(Device::getDevicePhysicalId)
-                .collect(Collectors.toList());
-
-        boolean isEmptyExistIdList = existIdList.isEmpty();
-
-        List<Device> existingDevices = new ArrayList<>();
-        List<Device> newDevices = new ArrayList<>();
-        allDevices.forEach(device -> {
-            if (!isEmptyExistIdList && existIdList.contains(device.getDevicePhysicalId())) {
-                existingDevices.add(device);
-            } else {
-                newDevices.add(device);
-            }
-        });
-
-        Map<Boolean, List<Device>> partitionedDevices = new HashMap<>();
-        partitionedDevices.put(true, existingDevices);
-        partitionedDevices.put(false, newDevices);
-        return partitionedDevices;
-    }
-
-    public void insertGatewayDevice(List<Gateway> allGateways){
-
-        // 获取所有节点列表，并设置上级设备
-        List<Node> allNodes = getAllNodesWithParentDeviceId(allGateways);
-
-        // 获取所有节点的开关列表，并设置上级设备
-        List<Switch> allSwitches = getAllSwitchesWithParentDeviceId(allNodes);
-
-        // 获取所有节点的传感器列表，并设置上级设备
-        List<Sensor> allSensors = getAllSensorsWithParentDeviceId(allNodes);
-
-        // 将网关、节点、开关分为两个部分：已存在和新设备
-        Map<Boolean, List<Device>> devicePartitioned = partitionDevices(allGateways, allNodes, allSwitches);
-
-        List<Device> existingDevice = devicePartitioned.get(true);
-        List<Device> newDevice = devicePartitioned.get(false);
-
-
-        // 新旧数据一起搞，真的让人很烦恼
-        // 新的直接插
-        List<Device> allNewDevices = Stream.of(newDevice)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        deviceService.saveBatch(allNewDevices);
-
-        // 旧的更新呀
-        List<Device> allExistDevices = Stream.of(existingDevice)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        if (allExistDevices.size() > 0) {
-            List<Device> devicesToUpdate = allExistDevices.stream()
-                    .map(oldDevice -> {
-                        Device device = deviceService.searchByPhysicalID(oldDevice.getDevicePhysicalId());
-                        device.setDeviceState(oldDevice.getDeviceState());
-                        device.setDeviceStatus(oldDevice.getDeviceStatus());
-                        return device;
-                    })
-                    .collect(Collectors.toList());
-            deviceService.updateBatchById(devicesToUpdate);
-        }
-
-        // 少的怎么搞，少的先不搞
-
-
-        // TODO  待优化
-        // sensor & switch
-        // 这个插完还得插数据这块的思路是，依据设备物理ID查询得到设备ID，之后再插入两张表
-        for (Sensor sensor : allSensors) {
-            Device device = converter.sensorToDevice(sensor);
-            try {
-                Device temp = deviceService.searchByPhysicalID(sensor.getSensorId());
-                if (temp != null) {
-                    device.setDeviceState(sensor.getDeviceStatus());
-                    device.setDeviceStatus(sensor.getIsOpen());
-                    deviceService.updateById(temp);
-                    device = temp;
-                } else {
-                    deviceService.save(device);
-                }
-            } catch (Exception e) {
-                log.error("DeviceController.save中，插入 Device 失败");
-            }
-
-            if (devicePropertyService.searchOne(device.getDeviceId(), sensor.getSensorType()) == null) {
-                DeviceProperty deviceProperty = DeviceProperty.builder()
-                        .deviceId(device.getDeviceId())
-                        .propertyName(sensor.getSensorType())
-                        .build();
-                try {
-                    devicePropertyService.save(deviceProperty);
-                } catch (Exception e) {
-                    log.error("DeviceController.save中，插入 DeviceProperty 失败");
-                }
-            }
-            DeviceData deviceData = converter.sensorToDeviceData(sensor);
-            deviceData.setDeviceId(device.getDeviceId());
-            deviceDataService.insert(deviceData);
-        }
-
-    }
-
-
 }
