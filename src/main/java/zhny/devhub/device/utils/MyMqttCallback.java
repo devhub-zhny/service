@@ -99,7 +99,9 @@ public class MyMqttCallback implements MqttCallbackExtended {
             String data = new String(mqttMessage.getPayload());
             log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic,data );
             List<Gateway> allGateways = hardware.parseSensorData(data);
-            deviceService.insertGatewayDevice(allGateways);
+            if(allGateways.size()>0){
+                deviceService.insertGatewayDevice(allGateways);
+            }
             //TODO 业务处理
 
 
@@ -109,7 +111,9 @@ public class MyMqttCallback implements MqttCallbackExtended {
             String data = new String(mqttMessage.getPayload());
             log.info("== MyMqttCallback ==> messageArrived 接收消息主题: {}，接收消息内容: {}", topic, data);
             List<Gateway> allGateways = hardware.parseSwitchData(data);
-            deviceService.insertGatewayDevice(allGateways);
+            if(allGateways.size()>0){
+                deviceService.insertGatewayDevice(allGateways);
+            }
             //TODO 业务处理
         }
     }

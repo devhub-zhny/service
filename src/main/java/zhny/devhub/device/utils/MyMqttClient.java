@@ -12,9 +12,9 @@ public class MyMqttClient {
      * MQTT Broker 基本连接参数，用户名、密码为非必选参数
      */
     private String host = "ws://47.120.63.23:8083/mqtt";
-    private String username = "zhny";
-    private String password = "zhny";
-    private String clientId = "asdfafafadsadr";
+    private String username = "ac";
+    private String password = "******";
+    private String clientId = "jiujiuwo";
     private int timeout = 20;
     private int keepalive = 60;
     private boolean clearSession = true;

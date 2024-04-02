@@ -113,7 +113,7 @@ public class Hardware {
 
     public List<Gateway> parseSwitchData(String switchData) {
         int dataLength = switchData.length();
-        if(dataLength<4+4+4*2 || dataLength % 8 !=0){
+        if(dataLength<4+4+4*2 || dataLength % 10 !=8){
             log.error("电磁阀数据格式错误");
             return Collections.emptyList();
         }
@@ -133,8 +133,8 @@ public class Hardware {
 
         for (int i = 8; i < switchData.length(); i += switchDataLength) {
             // 计算节点ID
-            String id = baseAddress + gatewayAddress + switchData.substring(i + 2, i + 4);
-            long nodeId = Long.parseLong(id, 16);
+            String node_id = baseAddress + gatewayAddress + switchData.substring(i + 2, i + 4);
+            long nodeId = Long.parseLong(node_id, 16);
 
             // 检查节点是否已存在，如果不存在则创建新节点，否则从 Map 中获取现有节点
             List<Switch> switchList = nodeSwitchMap.computeIfAbsent(nodeId, k -> new ArrayList<>());
@@ -154,7 +154,8 @@ public class Hardware {
                 s.setDeviceStatus("offline");
             }
             s.setTimestamp(time);
-            s.setSwitchId(Long.parseLong(baseAddress + gatewayAddress + switchData.substring(i + 2, i + 6), 16));
+            String switch_id = baseAddress + gatewayAddress + switchData.substring(i + 2, i + 6);
+            s.setSwitchId(Long.parseLong(switch_id, 16));
             s.setParentDeviceId(nodeId);
             switchList.add(s);
         }
