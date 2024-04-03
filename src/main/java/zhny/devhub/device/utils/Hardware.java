@@ -73,7 +73,7 @@ public class Hardware {
 
                 // 获取十六进制数据并转换为 double 类型
                 String hexData = sensorData.substring(i + dataOffset, i + dataOffset + 4);
-                double value = Double.longBitsToDouble(Long.parseLong(hexData, 16));
+                double value = (double) Integer.parseInt(hexData, 16) / 10;
                 sensor.setValue(value);
 
                 // 设置单位
