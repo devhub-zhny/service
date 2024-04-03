@@ -28,6 +28,11 @@ public class Hardware {
         String baseAddress = sensorData.substring(4, 6);
         String gatewayAddress = sensorData.substring(6, 8);
 
+        if (!header.equals("A1AA")){
+            log.error("传感器数据格式错误,包头有误");
+            return Collections.emptyList();
+        }
+
         // 解析传感器数据
         int sensorDataLength = 19 * 2; // 每个传感器数据的长度
 
@@ -113,7 +118,7 @@ public class Hardware {
 
     public List<Gateway> parseSwitchData(String switchData) {
         int dataLength = switchData.length();
-        if(dataLength<4+4+4*2 || dataLength % 10 !=8){
+        if(dataLength<4+4+5*2 || dataLength % 10 !=8){
             log.error("电磁阀数据格式错误");
             return Collections.emptyList();
         }
@@ -125,6 +130,10 @@ public class Hardware {
         String baseAddress = switchData.substring(4, 6);
         String gatewayAddress = switchData.substring(6, 8);
 
+        if (!header.equals("A2AA")){
+            log.error("电磁阀数据格式错误,包头有误");
+            return Collections.emptyList();
+        }
         // 解析开关数据
         int switchDataLength = 5 * 2; // 每个开关数据的长度
 

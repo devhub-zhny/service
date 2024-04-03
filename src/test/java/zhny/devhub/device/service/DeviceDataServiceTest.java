@@ -38,7 +38,7 @@ class DeviceDataServiceTest {
     public void testH(){
         Hardware hardware = new Hardware();
 //        List<Gateway> gatewayList = hardware.parseSensorData(null);
-        List<Gateway> switchList = hardware.parseSwitchData("A3AA0101FE01110101");
+        List<Gateway> switchList = hardware.parseSwitchData("A3AA0101FE0101110101");
 //        System.out.println(gatewayList.size());
         System.out.println(switchList.size());
 

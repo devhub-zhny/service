@@ -80,18 +80,17 @@ public class DeviceController {
     @PatchMapping("/switch/{id}")
     public SwitchVo open(@PathVariable Long id) {
         SwitchVo vo = deviceService.open(id);
-        String res = "%"+Long.toHexString(vo.getIds().get(vo.getIds().size()-1));
+        Long physicalId = vo.getIds().get(vo.getIds().size()-1);
+        String res = "%"+Long.toHexString(physicalId)+"0";
         if (vo.isState()){
-            res = res+"01";
+            res = res+"1";
         }else {
-            res = res+"00";
+            res = res+"0";
         }
         // 向MQTT服务器发送指令
-
         mqttService.publish(res,"data");
 //        mqttService.publish("%0101011101","data");
         return vo;
-
     }
 
     // 删除设备
