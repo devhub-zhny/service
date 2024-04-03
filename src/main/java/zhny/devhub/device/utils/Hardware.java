@@ -47,8 +47,8 @@ public class Hardware {
             List<Sensor> sensorList = nodeSensorMap.computeIfAbsent(nodeId, k -> new ArrayList<>());
 
             // 定义传感器类型数组
-            String[] sensorTypes = {"temperature", "humidity", "conductivity", "ph", "nitrogen", "phosphorus", "potassium"};
-            String[] units = {"Celsius", "%", "µS/cm", "", "mg/L", "mg/L", "mg/L"};
+            String[] sensorTypes = {"humidity", "temperature",  "conductivity", "ph", "nitrogen", "phosphorus", "potassium"};
+            String[] units = {"%","Celsius",  "µS/cm", "", "mg/L", "mg/L", "mg/L"};
 
             for (int j = 0; j < sensorTypes.length; j++) {
                 Sensor sensor = new Sensor();
@@ -78,7 +78,14 @@ public class Hardware {
 
                 // 获取十六进制数据并转换为 double 类型
                 String hexData = sensorData.substring(i + dataOffset, i + dataOffset + 4);
-                double value = (double) Integer.parseInt(hexData, 16) / 10;
+                double value;
+                if(j == 3){
+                    // ph 量化方式与其他不同
+                    value = (double) Integer.parseInt(hexData, 16) / 100;
+                }else{
+                    value = (double) Integer.parseInt(hexData, 16) / 10;
+                }
+
                 sensor.setValue(value);
 
                 // 设置单位
