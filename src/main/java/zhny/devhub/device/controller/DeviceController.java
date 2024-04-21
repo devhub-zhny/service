@@ -81,11 +81,14 @@ public class DeviceController {
     public SwitchVo open(@PathVariable Long id) {
         SwitchVo vo = deviceService.open(id);
         Long physicalId = vo.getIds().get(vo.getIds().size()-1);
-        String res = "%"+Long.toHexString(physicalId)+"0";
+        String res = Long.toHexString(physicalId)+"0";
+        if (res.length() % 2 == 0){
+            res = "%0"+res;
+        }
         if (vo.isState()){
-            res = res+"1";
-        }else {
             res = res+"0";
+        }else {
+            res = res+"1";
         }
         // 向MQTT服务器发送指令
         mqttService.publish(res,"data");
