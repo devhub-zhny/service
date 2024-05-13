@@ -86,9 +86,9 @@ public class DeviceController {
             res = "%0"+res;
         }
         if (vo.isState()){
-            res = res+"0";
-        }else {
             res = res+"1";
+        }else {
+            res = res+"0";
         }
         // 向MQTT服务器发送指令
         mqttService.publish(res,"data");

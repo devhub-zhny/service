@@ -45,6 +45,14 @@ spring:
     topic1: zhny  # 通配符主题只能用于订阅，不能用于发布。+：表示单层通配符，#：表示多层通配符
     topic2: A/abc
     topic3: ABC
+  influxdb:
+    url: 101.42.136.34:8086
+    username: agrox-influx
+    password: JN^qT!4WgeWaj8
+    org: agrox-org
+    bucket: agrox-bucket
+    token: uke4zIwDR5IxyprFhKOxSG6HfHNQE6Im9VidOMt0WWvieDDh-mM4AzkGqaDNUSe5_1-di5Rdik_n5eQmcXnWkA==
+
 
 
 mybatis-plus:
